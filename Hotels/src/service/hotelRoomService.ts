@@ -6,7 +6,7 @@ async function getAll(page:number, limit:number) {
   return await hotelRoomRepository.getAll(page, limit);
 }
 
-function getById(hotelRoomlId:number) {
+function getById(hotelRoomlId:number) { 
     return hotelRoomRepository.getById((hotelRoomlId));
   }
 function post(hotelRoom: HotelRoomRequest) {

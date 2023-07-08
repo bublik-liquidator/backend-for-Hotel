@@ -41,8 +41,8 @@ async function getById(id: number) {
   }
 }
 async function post(hotel: HotelRoomRequest) {
-  const query = "INSERT INTO hotel_room(hotel_id, number, description, price) VALUES($1, $2, $3, $4) RETURNING *";
-  const values = [hotel.hotel_id, hotel.number, hotel.description, hotel.price];
+  const query = "INSERT INTO hotel_room(name,path_picture,hotel_id, number, description, price) VALUES($1, $2, $3, $4,$5,$6) RETURNING *";
+  const values = [hotel.name,hotel.path_picture,hotel.hotel_id, hotel.number, hotel.description, hotel.price];
   try {
     const res = await db.pool.query(query, values);
     loggerr.info("Data has been saved!");
@@ -55,8 +55,8 @@ async function post(hotel: HotelRoomRequest) {
 
 
 async function put(hotel: HotelRoomDTO, id: number) {
-  const query = "UPDATE hotel_room SET hotel_id = $1, number = $2, description = $3, price = $4,  WHERE id = $5 RETURNING *";
-  const values = [hotel.hotel_id, hotel.number, hotel.description, hotel.price, id];
+  const query = "UPDATE hotel_room SET hotel_id = $1, number = $2, description = $3, price = $4, name = $5, path_picture=$6 WHERE id = $7 RETURNING *";
+  const values = [hotel.hotel_id, hotel.number, hotel.description, hotel.price,hotel.name,hotel.path_picture, id];
   try {
     const res = await db.pool.query(query, values);
     loggerr.info("Hotel with ID:" + id + " updated successfully.");
