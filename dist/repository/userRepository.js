@@ -12,11 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.deleteById = exports.put = exports.post = exports.getById = exports.getAll = void 0;
 const pino_1 = __importDefault(require("pino"));
 const pino_pretty_1 = __importDefault(require("pino-pretty"));
 const loggerr = (0, pino_1.default)((0, pino_pretty_1.default)());
 const dbProvider_1 = __importDefault(require("../config/dbProvider"));
-loggerr.info(process.env.POSTGRESQL_PORT);
 function getAll(page, size) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -36,6 +36,7 @@ function getAll(page, size) {
         }
     });
 }
+exports.getAll = getAll;
 function getById(id) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -53,19 +54,7 @@ function getById(id) {
         }
     });
 }
-// async function getByLogin(login: string) {
-//   try {
-//     const result = await db.pool.query(`SELECT * FROM users WHERE login = ${login}`);
-//     if (result.rows.length > 0) {
-//       return result.rows[0];
-//     } else {
-//       return 0
-//     }
-//   } catch (err) {
-//     loggerr.error(err);
-//     throw new Error("Repository getByLogin error");
-//   }
-// }
+exports.getById = getById;
 function post(user) {
     return __awaiter(this, void 0, void 0, function* () {
         const query = "INSERT INTO users(username, photo, phonenomber, password, many, email, birthday, login) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *";
@@ -81,6 +70,7 @@ function post(user) {
         }
     });
 }
+exports.post = post;
 ;
 function put(user, id) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -97,6 +87,7 @@ function put(user, id) {
         }
     });
 }
+exports.put = put;
 function deleteById(id) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -108,10 +99,4 @@ function deleteById(id) {
         }
     });
 }
-exports.default = {
-    getAll,
-    getById,
-    post,
-    put,
-    deleteById,
-};
+exports.deleteById = deleteById;

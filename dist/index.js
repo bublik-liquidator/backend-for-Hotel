@@ -40,6 +40,7 @@ const indexControler_1 = __importDefault(require("./controller/indexControler"))
 const hotelController_1 = __importDefault(require("./controller/hotelController"));
 const hotelRoomController_1 = __importDefault(require("./controller/hotelRoomController"));
 const loginController_1 = __importDefault(require("./controller/loginController"));
+const authController_1 = __importDefault(require("./controller/authController"));
 const roomBookingController_1 = __importDefault(require("./controller/roomBookingController"));
 const userController_1 = __importDefault(require("./controller/userController"));
 const app = (0, express_1.default)();
@@ -59,6 +60,7 @@ app.use("/api/user", userController_1.default);
 app.use("/api/hotel", hotelController_1.default);
 app.use("/api/hotel_room", hotelRoomController_1.default);
 app.use("/api/login", loginController_1.default);
+app.use("/api/auth", authController_1.default);
 app.use("/api/room_booking", roomBookingController_1.default);
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

@@ -1,6 +1,8 @@
 import { UserRequest } from "../dto/userRequest.dto";
 import { UserDTO } from "../dto/user.dto";
-import userRepository from "../repository/userRepository";
+
+import * as userRepository from '../repository/userRepository';
+
 
 async function getAll(page: number, limit: number) {
   return await userRepository.getAll(page, limit);
@@ -14,7 +16,7 @@ async function getById(userId: number) {
 // }
 
 
-async function post(request: UserRequest) { 
+async function post(request: UserRequest) {
   return await userRepository.post(new UserRequest(request));
 }
 
@@ -26,10 +28,10 @@ function deleteById(userId: number) {
   return userRepository.deleteById(userId);
 }
 
-export default {
+export {
   getAll,
   getById,
   post,
   put,
-  deleteById,
+  deleteById
 };

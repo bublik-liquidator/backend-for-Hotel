@@ -70,10 +70,10 @@ router.delete("/:id", async (req, res) => {
       return res.status(404).json({ error: 'Hotel not found' });
     } 
     await hotelService.deleteById(parseInt(req.params.id))
-    return res.status(200).json({ message: 'Hotel deleted successfully.' });
+    res.status(200).json({ message: 'Hotel deleted successfully.' });
   } catch (err) {
     loggerr.error(err);
-    return res.status(500).json({ error: 'Internal Server Error with delete by id' });
+     res.status(500).json({ error: 'Internal Server Error with delete by id' });
   }
 
 });

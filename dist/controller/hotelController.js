@@ -12,9 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const userService_1 = __importDefault(require("../service/userService"));
-const user_dto_1 = require("../dto/user.dto");
-const userRequest_dto_1 = require("../dto/userRequest.dto");
+const hotelService_1 = __importDefault(require("../service/hotelService"));
+const hotel_dto_1 = require("../dto/hotel.dto");
+const hotelRequest_dto_1 = require("../dto/hotelRequest.dto");
 const pino_1 = __importDefault(require("pino"));
 const pino_pretty_1 = __importDefault(require("pino-pretty"));
 const loggerr = (0, pino_1.default)((0, pino_pretty_1.default)());
@@ -24,48 +24,44 @@ router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var page = parseInt(req.query.page) || 1;
     var limit = parseInt(req.query.limit) || 10;
     try {
-        const result = yield userService_1.default.getAll(page, limit);
+        const result = yield hotelService_1.default.getAll(page, limit);
         if (!result) {
-            return res.status(404).json({ error: 'user not found' });
+            return res.status(404).json({ error: 'Hotel not found' });
         }
         return res.status(200).json(result);
     }
     catch (err) {
         loggerr.error(err);
-        return res.status(500).json({ error: 'user Server Error with get all' });
+        return res.status(500).json({ error: 'Hotel Server Error with get all' });
     }
 }));
 router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = parseInt(req.params.id);
-        const user = yield userService_1.default.getById(id);
-        if (!user) {
-            return res.status(404).json({ error: 'user not found' });
+        const hotel = yield hotelService_1.default.getById(id);
+        if (!hotel) {
+            return res.status(404).json({ error: 'Hotel not found' });
         }
-        return res.status(200).json(new user_dto_1.UserDTO(user));
+        return res.status(200).json(new hotel_dto_1.HotelDTO(hotel));
     }
     catch (err) {
         loggerr.error(err);
         return res.status(500).json({ error: 'Internal Server Error with get by id' });
     }
 }));
-// router.post("/many", async (req, res) => {
-//   let user = await userService.getByLogin(req.body.login) 
-//   return res.json(new UserRequest(user));
-// });
 router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let user = yield userService_1.default.post(req.body);
-    return res.json(new userRequest_dto_1.UserRequest(user));
+    let hotel = yield hotelService_1.default.post(req.body);
+    return res.json(new hotelRequest_dto_1.HotelRequest(hotel));
 }));
 router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = parseInt(req.params.id);
-        const user = yield userService_1.default.getById(id);
-        if (!user) {
-            return res.status(404).json({ error: 'user not found' });
+        const hotel = yield hotelService_1.default.getById(id);
+        if (!hotel) {
+            return res.status(404).json({ error: 'Hotel not found' });
         }
-        const result = yield userService_1.default.put(req.body, parseInt(req.params.id));
-        return res.status(201).json(new user_dto_1.UserDTO(result));
+        const result = yield hotelService_1.default.put(req.body, parseInt(req.params.id));
+        return res.status(201).json(new hotel_dto_1.HotelDTO(result));
     }
     catch (err) {
         loggerr.error(err);
@@ -75,16 +71,16 @@ router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 router.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = parseInt(req.params.id);
-        const user = yield userService_1.default.getById(id);
-        if (!user) {
-            return res.status(404).json({ error: 'user not found' });
+        const hotel = yield hotelService_1.default.getById(id);
+        if (!hotel) {
+            return res.status(404).json({ error: 'Hotel not found' });
         }
-        yield userService_1.default.deleteById(parseInt(req.params.id));
-        return res.status(200).json({ message: 'user deleted successfully.' });
+        yield hotelService_1.default.deleteById(parseInt(req.params.id));
+        res.status(200).json({ message: 'Hotel deleted successfully.' });
     }
     catch (err) {
         loggerr.error(err);
-        return res.status(500).json({ error: 'Internal Server Error with delete by id' });
+        res.status(500).json({ error: 'Internal Server Error with delete by id' });
     }
 }));
 exports.default = router;

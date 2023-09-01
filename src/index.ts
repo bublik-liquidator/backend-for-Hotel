@@ -15,6 +15,8 @@ import indexController from "./controller/indexControler";
 import hotelController from "./controller/hotelController";
 import hotelRoomController from './controller/hotelRoomController';
 import loginController from "./controller/loginController";
+import authController from "./controller/authController";
+
 import roomBookingController from "./controller/roomBookingController";
 import userController from "./controller/userController";
 
@@ -42,6 +44,8 @@ app.use("/api/user", userController);
 app.use("/api/hotel", hotelController);
 app.use("/api/hotel_room", hotelRoomController);
 app.use("/api/login", loginController);
+app.use("/api/auth", authController);
+
 app.use("/api/room_booking", roomBookingController);
 
 // catch 404 and forward to error handler

@@ -1,6 +1,5 @@
 
-
-import userService from "../service/userService"
+import * as userService from '../service/userService';
 import { UserDTO } from "../dto/user.dto";
 import { UserRequest } from "../dto/userRequest.dto";
 import pino from 'pino';
@@ -10,10 +9,13 @@ const loggerr = pino(pretty());
 import express, { Express, NextFunction, Request, Response, Router } from 'express';
 const router: Router = express.Router();
 
+
+
+
 router.get("/", async (req, res) => {
-   var page: number = parseInt(req.query.page as string)|| 1;
-  var limit: number = parseInt(req.query.limit as string)|| 10;  
-  try {    
+  var page: number = parseInt(req.query.page as string) || 1;
+  var limit: number = parseInt(req.query.limit as string) || 10;
+  try {
     const result = await userService.getAll(page, limit);
     if (!result) {
       return res.status(404).json({ error: 'user not found' });
@@ -48,7 +50,7 @@ router.get("/:id", async (req, res) => {
 // });
 
 router.post("/", async (req, res) => {
-  let user = await userService.post(req.body) 
+  let user = await userService.post(req.body)
   return res.json(new UserRequest(user));
 });
 
@@ -73,7 +75,7 @@ router.delete("/:id", async (req, res) => {
     const user = await userService.getById(id);
     if (!user) {
       return res.status(404).json({ error: 'user not found' });
-    } 
+    }
     await userService.deleteById(parseInt(req.params.id))
     return res.status(200).json({ message: 'user deleted successfully.' });
   } catch (err) {

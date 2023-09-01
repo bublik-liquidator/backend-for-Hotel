@@ -6,9 +6,7 @@ import db from "../config/dbProvider"
 import { UserDTO } from '../dto/user.dto';
 import { UserRequest } from '../dto/userRequest.dto';
 
-
-loggerr.info(process.env.POSTGRESQL_PORT);
-
+ 
 async function getAll(page: number, size: number): Promise<any> {
   try {
     const result = await db.pool.query("SELECT * FROM users ORDER BY id OFFSET $1 LIMIT $2", [(page - 1) * size, size]);
@@ -43,19 +41,7 @@ async function getById(id: number) {
   }
 }
 
-// async function getByLogin(login: string) {
-//   try {
-//     const result = await db.pool.query(`SELECT * FROM users WHERE login = ${login}`);
-//     if (result.rows.length > 0) {
-//       return result.rows[0];
-//     } else {
-//       return 0
-//     }
-//   } catch (err) {
-//     loggerr.error(err);
-//     throw new Error("Repository getByLogin error");
-//   }
-// }
+
 async function post(user: UserRequest) {
   const query = "INSERT INTO users(username, photo, phonenomber, password, many, email, birthday, login) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *";
   const values =  [user.username, user.photo, user.phonenomber, user.password, user.many, user.email, user.birthday, user.login];
@@ -93,10 +79,10 @@ async function deleteById(id: number) {
   }
 }
 
-export default {
+export  {
   getAll,
   getById,
   post,
   put,
-  deleteById,
+  deleteById
 };
