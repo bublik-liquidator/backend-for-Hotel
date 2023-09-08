@@ -3,7 +3,7 @@ export class UserDTO {
     username!:string;
     password!:string;
     photo!:string;
-    many!:string;
+    many!:number;
     birthday!:string;
     phonenomber!:string;
     email!:string;

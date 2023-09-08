@@ -70,8 +70,8 @@ function post(room) {
 ;
 function postCheck(room) {
     return __awaiter(this, void 0, void 0, function* () {
-        const res = yield dbProvider_1.default.pool.query(`SELECT CASE WHEN EXISTS(SELECT * FROM room_booking WHERE room_id = ${room.id}) THEN 'true' ELSE 'false' END;`);
-        return res.rows[0].case;
+        const res = yield dbProvider_1.default.pool.query(`SELECT EXISTS(SELECT * FROM room_booking WHERE room_id = ${room.id})`);
+        return res.rows[0].exists;
     });
 }
 function postAccount(user) {

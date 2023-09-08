@@ -7,6 +7,8 @@ class HotelDTO {
         this.name = model.name;
         this.manager_id = model.manager_id;
         this.path_picture = model.path_picture;
+        this.location = model.location;
+        this.services = model.services;
     }
 }
 exports.HotelDTO = HotelDTO;
