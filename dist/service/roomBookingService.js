@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const roomBookingRepository_1 = __importDefault(require("../repository/roomBookingRepository"));
 const roomBookingRequest_dto_1 = require("../dto/roomBookingRequest.dto");
 const hotelRoom_dto_1 = require("../dto/hotelRoom.dto");
-const user_dto_1 = require("../dto/user.dto");
 function getAll(page, limit) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield roomBookingRepository_1.default.getAll(page, limit);
@@ -30,8 +29,8 @@ function post(hotelRoom) {
 function postCheck(hotelRoom) {
     return roomBookingRepository_1.default.postCheck(new hotelRoom_dto_1.HotelRoomDTO(hotelRoom));
 }
-function postAccount(user) {
-    return roomBookingRepository_1.default.postAccount(new user_dto_1.UserDTO(user));
+function postAccount(id) {
+    return roomBookingRepository_1.default.postAccount((id));
 }
 function put(hotelRoom, id) {
     return __awaiter(this, void 0, void 0, function* () {

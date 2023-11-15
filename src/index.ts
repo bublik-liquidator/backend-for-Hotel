@@ -14,8 +14,8 @@ const loggerr = pino(pretty());
 import indexController from "./controller/indexControler";
 import hotelController from "./controller/hotelController";
 import hotelRoomController from './controller/hotelRoomController';
-import loginController from "./controller/loginController";
 import authController from "./controller/authController";
+import regController from "./controller/regController";
 
 import roomBookingController from "./controller/roomBookingController";
 import userController from "./controller/userController";
@@ -32,23 +32,24 @@ const corsOptions = {
    origin:'*', 
    credentials:true,            //access-control-allow-credentials:true
    optionSuccessStatus:200,
-}
+} 
 
-app.use(cors(corsOptions)) // Use this after the variable declaration
+app.use(cors(corsOptions)) // Use this after the variable declaration 
 
-app.use(bodyParser.json());
+app.use(bodyParser.json()); 
 app.use(bodyParser.urlencoded({ extended: true }));
-
+  
 app.use("/api", indexController);
 app.use("/api/user", userController);
 app.use("/api/hotel", hotelController);
 app.use("/api/hotel_room", hotelRoomController);
-app.use("/api/login", loginController);
 app.use("/api/auth", authController);
+app.use("/api/register", regController);
+ 
+// app.use("/api/auth", authController);
 
 app.use("/api/room_booking", roomBookingController);
 
-// catch 404 and forward to error handler
 app.use((req: Request, res: Response, next: NextFunction) => {
   next(createError(404));
 });

@@ -7,6 +7,7 @@ export class UserRequest {
   phonenomber!: string;
   email!: string;
   login!:string;
+  role!:string;
 
   manager_id!: bigint;
   constructor(model: UserRequest) {
@@ -18,6 +19,7 @@ export class UserRequest {
     this.phonenomber = model.phonenomber
     this.email = model.email 
     this.login = model.login  
- 
+     this.role = model.role  
+
   }
 }

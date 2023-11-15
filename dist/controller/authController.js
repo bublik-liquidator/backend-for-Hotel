@@ -13,30 +13,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const passport_1 = __importDefault(require("passport"));
-const authService_1 = require("../service/authService");
+const authService_1 = __importDefault(require("../service/authService"));
 const router = express_1.default.Router();
-router.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { login, password } = req.body;
-        yield authService_1.authService.register(login, password);
-        res.sendStatus(201);
+        const token = yield authService_1.default.login(req.body);
+        if (token) {
+            return res.json({ token });
+        }
+        else {
+            return res.status(401).send({ error: "Ошибка, нет токена" });
+        }
     }
     catch (error) {
-        res.status(400).send(error);
+        return res.status(500).send({ error });
     }
 }));
-router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { login, password } = req.body;
-        const token = yield authService_1.authService.login(login, password);
-        res.json({ token });
-    }
-    catch (error) {
-        res.status(400).send(error);
-    }
-}));
-router.get('/protected', passport_1.default.authenticate('jwt', { session: false }), (req, res) => {
-    res.send('Protected route');
-});
 exports.default = router;

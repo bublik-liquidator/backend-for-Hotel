@@ -17,8 +17,8 @@ function post(hotelRoom: RoomBookingRequest) {
 function postCheck(hotelRoom: HotelRoomDTO) {
   return hotelRoomRepository.postCheck(new HotelRoomDTO(hotelRoom));
 }
-function postAccount(user: UserDTO) {
-  return hotelRoomRepository.postAccount(new UserDTO(user));
+function postAccount(id: number) {
+  return hotelRoomRepository.postAccount((id));
 }
 
 async function put(hotelRoom: RoomBooking, id:number) {

@@ -1,31 +1,20 @@
-import express, { Router } from 'express';
-import passport from 'passport';
-import { authService } from '../service/authService';
+import express from 'express';
+import authService from '../service/authService';
+const router = express.Router();
 
-const router: Router = express.Router();
-
-router.post('/register', async (req, res) => {
+router.post("/", async (req, res) => {
   try {
-    const { login, password } = req.body;
-    await authService.register(login, password);
-    res.sendStatus(201);
+    const token = await authService.login(req.body);
+    if (token) {
+      return res.json({ token });
+    } else {
+      return res.status(401).send({ error: "Ошибка, нет токена"});
+    }
   } catch (error) {
-    res.status(400).send(error);
+    return res.status(500).send({ error});
   }
 });
 
-router.post('/login', async (req, res) => {
-  try {
-    const { login, password } = req.body;
-    const token = await authService.login(login, password);
-    res.json({ token });
-  } catch (error) {
-    res.status(400).send(error);
-  }
-});
 
-router.get('/protected', passport.authenticate('jwt', { session: false }), (req, res) => {
-  res.send('Protected route');
-});
 
 export default router;

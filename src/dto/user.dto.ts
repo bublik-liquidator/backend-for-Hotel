@@ -8,6 +8,7 @@ export class UserDTO {
     phonenomber!:string;
     email!:string;
     login!:string;
+    role!:string
 
     constructor(model:UserDTO ) {
         this.id = model.id
@@ -19,5 +20,6 @@ export class UserDTO {
         this.phonenomber = model.phonenomber
         this.email = model.email  
         this.login = model.login  
+        this.role = model.role  
       }
 }

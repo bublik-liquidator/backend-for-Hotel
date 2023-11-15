@@ -26,7 +26,7 @@ router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const result = yield roomBookingService_1.default.getAll(page, limit);
         if (!result) {
-            return res.status(404).json({ error: 'Room not found' });
+            return res.status(404).json({ message: 'Room not found' });
         }
         return res.status(200).json(result);
     }
@@ -58,8 +58,8 @@ router.post("/check", (req, res) => __awaiter(void 0, void 0, void 0, function* 
     return res.json((hotelRoom));
 }));
 router.post("/account", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let user = yield roomBookingService_1.default.postAccount(req.body);
-    return res.json((user));
+    let id = yield roomBookingService_1.default.postAccount(req.body.id);
+    return res.json((id));
 }));
 router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

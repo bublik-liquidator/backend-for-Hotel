@@ -39,8 +39,8 @@ const loggerr = (0, pino_1.default)((0, pino_pretty_1.default)());
 const indexControler_1 = __importDefault(require("./controller/indexControler"));
 const hotelController_1 = __importDefault(require("./controller/hotelController"));
 const hotelRoomController_1 = __importDefault(require("./controller/hotelRoomController"));
-const loginController_1 = __importDefault(require("./controller/loginController"));
 const authController_1 = __importDefault(require("./controller/authController"));
+const regController_1 = __importDefault(require("./controller/regController"));
 const roomBookingController_1 = __importDefault(require("./controller/roomBookingController"));
 const userController_1 = __importDefault(require("./controller/userController"));
 const app = (0, express_1.default)();
@@ -52,17 +52,17 @@ const corsOptions = {
     credentials: true,
     optionSuccessStatus: 200,
 };
-app.use((0, cors_1.default)(corsOptions)); // Use this after the variable declaration
+app.use((0, cors_1.default)(corsOptions)); // Use this after the variable declaration 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api", indexControler_1.default);
 app.use("/api/user", userController_1.default);
 app.use("/api/hotel", hotelController_1.default);
 app.use("/api/hotel_room", hotelRoomController_1.default);
-app.use("/api/login", loginController_1.default);
 app.use("/api/auth", authController_1.default);
+app.use("/api/register", regController_1.default);
+// app.use("/api/auth", authController);
 app.use("/api/room_booking", roomBookingController_1.default);
-// catch 404 and forward to error handler
 app.use((req, res, next) => {
     next((0, http_errors_1.default)(404));
 });

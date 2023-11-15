@@ -11,6 +11,7 @@ class UserRequest {
         this.phonenomber = model.phonenomber;
         this.email = model.email;
         this.login = model.login;
+        this.role = model.role;
     }
 }
 exports.UserRequest = UserRequest;

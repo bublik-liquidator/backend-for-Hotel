@@ -13,28 +13,28 @@ function loginn(loginRequest) {
     if ((loginRequest.login == 'admin' && loginRequest.password == 'admin')) {
         logResponse.id = (ADMIN_ID);
         logResponse.token = ADMIN_TOKEN;
-        return logResponse; // внутри ADMIN_TOKEN + roles[] + login
+        return logResponse; // inside ADMIN_TOKEN + roles[] + login
     }
     if ((loginRequest.login == 'manager' && loginRequest.password == 'manager')) {
         logResponse.id = (MANAGER_ID);
         logResponse.token = MANAGER_TOKEN;
-        return logResponse; // внутри ADMIN_TOKEN + roles[] + login
+        return logResponse; // inside ADMIN_TOKEN + roles[] + login
     }
     if ((loginRequest.login == 'user' && loginRequest.password == 'user')) {
         logResponse.id = (USER_ID);
         logResponse.token = USER_TOKEN;
-        return logResponse; // внутри ADMIN_TOKEN + roles[] + login
+        return logResponse; // inside ADMIN_TOKEN + roles[] + login
     }
     else {
-        return null; // + статус 401, пустой ответ
+        return null; // + status 401, empty response
     }
 }
 // if (loginResponse) {
 //   res.status(200).send(loginResponse);
 // } else {
-//   res.status(401).send(); // пустой ответ
+// res.status(401).send(); // empty response
 // }
 exports.default = loginn;
-//тоже смаое для юзера
+////the same for the user
 //loginRequest:login pass
 //loginResponse: login, roles[], token

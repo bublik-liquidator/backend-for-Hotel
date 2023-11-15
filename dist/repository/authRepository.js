@@ -12,28 +12,41 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userRepository = void 0;
-const pg_1 = require("pg");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const dbProvider_1 = __importDefault(require("../config/dbProvider"));
+const pino_1 = __importDefault(require("pino"));
+const pino_pretty_1 = __importDefault(require("pino-pretty"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const pool = new pg_1.Pool({
-    host: 'localhost',
-    port: 5432,
-    user: 'postgres',
-    password: 'Q156ap',
-    database: 'postgres'
-});
-exports.userRepository = {
-    findUserByEmail(login) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const result = yield pool.query('SELECT * FROM users WHERE login = $1', [login]);
-            return result.rows[0];
-        });
-    },
-    createUser(login, password) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const hashedPassword = yield bcrypt_1.default.hash(password, 10);
-            console.log(login + "login");
-            yield pool.query('INSERT INTO users (login, password) VALUES ($1, $2)', [login, hashedPassword]);
-        });
-    }
-};
+const loggerr = (0, pino_1.default)((0, pino_pretty_1.default)());
+const SECRET_KEY = process.env.SECRET_KEY; // Используйте переменные окружения для хранения секретных ключей
+function authenticateUser(user) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const query = "SELECT * FROM users WHERE login = $1";
+        const values = [user.login];
+        try {
+            const res = yield dbProvider_1.default.pool.query(query, values);
+            if (res.rows.length > 0) {
+                const passwordMatch = yield bcrypt_1.default.compare(user.password, res.rows[0].password);
+                if (passwordMatch) {
+                    const token = jsonwebtoken_1.default.sign({ id: res.rows[0].id, role: res.rows[0].role }, process.env.SECRET_KEY);
+                    loggerr.info("User authenticated!");
+                    return token;
+                }
+                else {
+                    loggerr.error("Invalid password!");
+                    throw new Error("Invalid password");
+                }
+            }
+            else {
+                loggerr.error("User not found!");
+                throw new Error("User not found");
+            }
+        }
+        catch (error) {
+            loggerr.error(error);
+            throw new Error("Repository authentication error");
+        }
+    });
+}
+;
+exports.default = { authenticateUser };

@@ -17,6 +17,7 @@ const pino_1 = __importDefault(require("pino"));
 const pino_pretty_1 = __importDefault(require("pino-pretty"));
 const loggerr = (0, pino_1.default)((0, pino_pretty_1.default)());
 const dbProvider_1 = __importDefault(require("../config/dbProvider"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
 function getAll(page, size) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -26,7 +27,7 @@ function getAll(page, size) {
                 return result.rows;
             }
             else {
-                loggerr.info("Не нашёл.");
+                loggerr.info("I didn't find it.");
                 return 0;
             }
         }
@@ -57,8 +58,8 @@ function getById(id) {
 exports.getById = getById;
 function post(user) {
     return __awaiter(this, void 0, void 0, function* () {
-        const query = "INSERT INTO users(username, photo, phonenomber, password, many, email, birthday, login) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *";
-        const values = [user.username, user.photo, user.phonenomber, user.password, user.many, user.email, user.birthday, user.login];
+        const query = "INSERT INTO users(username, photo, phonenomber, password, many, email, birthday, login,role) VALUES($1, $2, $3, $4, $5, $6, $7, $8,$9) RETURNING *";
+        const values = [user.username, user.photo, user.phonenomber, user.password, user.many, user.email, user.birthday, user.login, user.role];
         try {
             const res = yield dbProvider_1.default.pool.query(query, values);
             loggerr.info("Data has been saved!");
@@ -74,8 +75,10 @@ exports.post = post;
 ;
 function put(user, id) {
     return __awaiter(this, void 0, void 0, function* () {
-        const query = "UPDATE users SET username = $1, photo = $2, phonenomber = $3, password = $4, many = $5, email = $6, birthday = $7 WHERE id = $8 RETURNING *";
-        const values = [user.username, user.photo, user.phonenomber, user.password, user.many, user.email, user.birthday, id];
+        const saltRounds = 10;
+        const hashedPassword = yield bcrypt_1.default.hash(user.password, saltRounds);
+        const query = "UPDATE users SET username = $1, photo = $2, phonenomber = $3,  many = $4, email = $5, birthday = $6,role = $7 WHERE id = $8 RETURNING *";
+        const values = [user.username, user.photo, user.phonenomber, user.many, user.email, user.birthday, user.role, id];
         try {
             const res = yield dbProvider_1.default.pool.query(query, values);
             loggerr.info("user with ID:" + id + " updated successfully.");

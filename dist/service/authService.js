@@ -12,32 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authService = void 0;
-const bcrypt_1 = __importDefault(require("bcrypt"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const authRepository_1 = require("../repository/authRepository");
-exports.authService = {
-    register(login, password) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const user = yield authRepository_1.userRepository.findUserByEmail(login);
-            if (user) {
-                throw new Error('Email already in use');
-            }
-            yield authRepository_1.userRepository.createUser(login, password);
-        });
-    },
-    login(login, password) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const user = yield authRepository_1.userRepository.findUserByEmail(login);
-            if (!user) {
-                throw new Error('Invalid login or password');
-            }
-            const match = yield bcrypt_1.default.compare(password, user.password);
-            if (!match) {
-                throw new Error('Invalid login or password');
-            }
-            const token = jsonwebtoken_1.default.sign({ id: user.id }, 'secret');
-            return token;
-        });
-    }
+const authRepository_1 = __importDefault(require("../repository/authRepository"));
+function login(user) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield authRepository_1.default.authenticateUser(user);
+    });
+}
+exports.default = {
+    login
 };

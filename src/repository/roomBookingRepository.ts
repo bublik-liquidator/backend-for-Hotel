@@ -59,8 +59,8 @@ async function postCheck( room: HotelRoomDTO ) {
   const res = await db.pool.query( `SELECT EXISTS(SELECT * FROM room_booking WHERE room_id = ${ room.id })` );
   return res.rows[ 0 ].exists;
 }
-async function postAccount( user: UserDTO ) {
-  const result = await db.pool.query( `SELECT * FROM room_booking WHERE booked_by_user_id = ${ user.id }` )
+async function postAccount( id: number) {
+  const result = await db.pool.query( `SELECT * FROM room_booking WHERE booked_by_user_id = ${ id }` )
   return result.rows;
 }
 

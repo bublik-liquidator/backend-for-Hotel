@@ -74,9 +74,9 @@ function postCheck(room) {
         return res.rows[0].exists;
     });
 }
-function postAccount(user) {
+function postAccount(id) {
     return __awaiter(this, void 0, void 0, function* () {
-        const result = yield dbProvider_1.default.pool.query(`SELECT * FROM room_booking WHERE booked_by_user_id = ${user.id}`);
+        const result = yield dbProvider_1.default.pool.query(`SELECT * FROM room_booking WHERE booked_by_user_id = ${id}`);
         return result.rows;
     });
 }

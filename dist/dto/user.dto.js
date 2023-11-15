@@ -12,6 +12,7 @@ class UserDTO {
         this.phonenomber = model.phonenomber;
         this.email = model.email;
         this.login = model.login;
+        this.role = model.role;
     }
 }
 exports.UserDTO = UserDTO;

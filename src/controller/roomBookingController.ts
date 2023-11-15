@@ -17,7 +17,7 @@ router.get("/", async (req, res) => {
   try {    
     const result = await hotelRoomService.getAll(page, limit);
     if (!result) {
-      return res.status(404).json({ error: 'Room not found' });
+      return res.status(404).json({ message: 'Room not found' });
     }
     return res.status(200).json(result);
 
@@ -54,8 +54,8 @@ router.post("/check", async (req, res) => {
 });
 
 router.post("/account", async (req, res) => {
-  let user = await hotelRoomService.postAccount(req.body) 
-  return res.json((user));
+  let id = await hotelRoomService.postAccount(req.body.id) 
+  return res.json((id));
 });
 
 router.put("/:id", async (req, res) => {

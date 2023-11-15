@@ -1,23 +1,36 @@
-import { Pool } from 'pg';
+import jwt from 'jsonwebtoken';
+import db from "../config/dbProvider"
+import pino from 'pino';
+import pretty from 'pino-pretty';
 import bcrypt from 'bcrypt';
 
-const pool = new Pool({
-    host: 'localhost',
-    port: 5432,
-    user: 'postgres',
-    password: 'Q156ap',
-    database: 'postgres'
-});
+const loggerr = pino(pretty());
+const SECRET_KEY = process.env.SECRET_KEY; // Используйте переменные окружения для хранения секретных ключей
 
-export const userRepository = {
-    async findUserByEmail(login: string) {
-      const result = await pool.query('SELECT * FROM users WHERE login = $1', [login]);
-      return result.rows[0];
-    },
-  
-    async createUser(login: string, password: string) {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      console.log(login+"login")
-      await pool.query('INSERT INTO users (login, password) VALUES ($1, $2)', [login, hashedPassword]);
+async function authenticateUser(user: { login: string; password: string; }) {
+  const query = "SELECT * FROM users WHERE login = $1";
+  const values = [user.login];
+
+  try {
+    const res = await db.pool.query(query, values);
+    if (res.rows.length > 0) {
+      const passwordMatch = await bcrypt.compare(user.password, res.rows[0].password);
+      if (passwordMatch) {
+        const token = jwt.sign({ id: res.rows[0].id, role: res.rows[0].role }, process.env.SECRET_KEY!);
+        loggerr.info("User authenticated!");
+        return token;
+      } else {
+        loggerr.error("Invalid password!");
+        throw new Error("Invalid password");
+      }
+    } else {
+      loggerr.error("User not found!");
+      throw new Error("User not found");
     }
-  };
+  } catch (error) {
+    loggerr.error(error);
+    throw new Error("Repository authentication error");
+  }
+};
+
+export default {authenticateUser};
