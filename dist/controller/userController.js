@@ -95,6 +95,21 @@ router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         return res.status(500).json({ error: 'Internal Server Error with put by id' });
     }
 }));
+router.put("change_password", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = parseInt(req.params.id);
+        const user = yield userService.getById(id);
+        if (!user) {
+            return res.status(404).json({ error: 'user not found' });
+        }
+        const result = yield userService.change_password(req.body, parseInt(req.params.id));
+        return res.status(201).json(new user_dto_1.UserDTO(result));
+    }
+    catch (err) {
+        loggerr.error(err);
+        return res.status(500).json({ error: 'Internal Server Error with put by id' });
+    }
+}));
 router.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = parseInt(req.params.id);

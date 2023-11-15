@@ -18,7 +18,7 @@ const pino_1 = __importDefault(require("pino"));
 const pino_pretty_1 = __importDefault(require("pino-pretty"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const loggerr = (0, pino_1.default)((0, pino_pretty_1.default)());
-const SECRET_KEY = process.env.SECRET_KEY; // Используйте переменные окружения для хранения секретных ключей
+const SECRET_KEY = process.env.SECRET_KEY;
 function authenticateUser(user) {
     return __awaiter(this, void 0, void 0, function* () {
         const query = "SELECT * FROM users WHERE login = $1";

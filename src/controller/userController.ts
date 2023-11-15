@@ -69,6 +69,21 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+router.put("change_password", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const user = await userService.getById(id);
+    if (!user) {
+      return res.status(404).json({ error: 'user not found' });
+    }
+    const result = await userService.change_password(req.body, parseInt(req.params.id));
+    return res.status(201).json(new UserDTO(result));
+  } catch (err) {
+    loggerr.error(err);
+    return res.status(500).json({ error: 'Internal Server Error with put by id' });
+  }
+});
+
 router.delete("/:id", async (req, res) => {
   try {
     const id = parseInt(req.params.id);

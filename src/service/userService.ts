@@ -24,6 +24,10 @@ async function put(newuser: UserDTO, id: number) {
   return await userRepository.put(newuser, id);
 }
 
+async function change_password(newuser: UserDTO, id: number) {
+  return await userRepository.change_password(newuser, id);
+}
+
 function deleteById(userId: number) {
   return userRepository.deleteById(userId);
 }
@@ -33,5 +37,7 @@ export {
   getById,
   post,
   put,
-  deleteById
+  deleteById,
+  change_password
 };
+

@@ -61,7 +61,7 @@ async function put( user: UserDTO, id: number ) {
   const saltRounds = 10;
   const hashedPassword = await bcrypt.hash( user.password, saltRounds );
 
-  const query = "UPDATE users SET username = $1, photo = $2, phonenomber = $3,  many = $4, email = $5, birthday = $6,role = $7 WHERE id = $8 RETURNING *";
+  const query = "UPDATE users SET username = $1, photo = $2, phonenomber = $3, many = $4, email = $5, birthday = $6,role = $7 WHERE id = $8 RETURNING *";
   const values = [ user.username, user.photo, user.phonenomber, user.many, user.email, user.birthday,user.role, id ];
 
   try {
@@ -73,6 +73,24 @@ async function put( user: UserDTO, id: number ) {
     throw new Error( "Repository put error" );
   }
 }
+
+async function change_password( user: UserDTO, id: number ) {
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash( user.password, saltRounds );
+
+  const query = "UPDATE users SET username = $1, login=$2, password = $3 WHERE id = $4 RETURNING *";
+  const values = [ user.username, user.login, hashedPassword, id ];
+
+  try {
+    const res = await db.pool.query( query, values );
+    loggerr.info( "user with ID:" + id + " updated successfully." );
+    return res.rows[ 0 ];
+  } catch ( error ) {
+    loggerr.error( error );
+    throw new Error( "Repository put error" );
+  }
+}
+
 
 async function deleteById( id: number ) {
   try {
@@ -88,5 +106,6 @@ export {
   getById,
   post,
   put,
-  deleteById
+  deleteById,
+  change_password
 };

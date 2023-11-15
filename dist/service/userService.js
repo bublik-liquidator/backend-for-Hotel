@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteById = exports.put = exports.post = exports.getById = exports.getAll = void 0;
+exports.change_password = exports.deleteById = exports.put = exports.post = exports.getById = exports.getAll = void 0;
 const userRequest_dto_1 = require("../dto/userRequest.dto");
 const userRepository = __importStar(require("../repository/userRepository"));
 function getAll(page, limit) {
@@ -62,6 +62,12 @@ function put(newuser, id) {
     });
 }
 exports.put = put;
+function change_password(newuser, id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield userRepository.change_password(newuser, id);
+    });
+}
+exports.change_password = change_password;
 function deleteById(userId) {
     return userRepository.deleteById(userId);
 }

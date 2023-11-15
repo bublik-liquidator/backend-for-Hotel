@@ -5,7 +5,7 @@ import pretty from 'pino-pretty';
 import bcrypt from 'bcrypt';
 
 const loggerr = pino(pretty());
-const SECRET_KEY = process.env.SECRET_KEY; // Используйте переменные окружения для хранения секретных ключей
+const SECRET_KEY = process.env.SECRET_KEY;
 
 async function authenticateUser(user: { login: string; password: string; }) {
   const query = "SELECT * FROM users WHERE login = $1";
