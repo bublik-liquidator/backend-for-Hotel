@@ -1,9 +1,10 @@
+import { UserRequest } from '../dto/userRequest.dto';
 import regRepository from '../repository/regRepository';
 
-async function register(user:{ login: string; password: string; }) {
+async function register(user: UserRequest) {
     return await regRepository.registerUser(user);
-  }
+}
   
-  export default {
+export default {
     register
-  };
+};

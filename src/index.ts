@@ -2,7 +2,6 @@ import createError from 'http-errors';
 import logger from 'morgan';
 import express, { Express, NextFunction, Request, Response } from 'express';
 import * as bodyParser from 'body-parser';
-import "reflect-metadata"
 
 import * as dotenv from 'dotenv';
 dotenv.config();
@@ -22,37 +21,43 @@ import userController from "./controller/userController";
 
 
 
-
 const app: Express = express();
 const port = process.env.INDEX_APP_PORT || 3000;
-
-app.use(logger("dev"));
 import cors from 'cors';
-const corsOptions = {
-   origin:'*', 
-   credentials:true,            //access-control-allow-credentials:true
-   optionSuccessStatus:200,
-} 
+import sequelize from './config/db';
 
-app.use(cors(corsOptions)) // Use this after the variable declaration 
 
-app.use(bodyParser.json()); 
-app.use(bodyParser.urlencoded({ extended: true }));
+sequelize.authenticate().then(async () => {
+
+  app.use("/api/user", userController);
+  app.use(logger("dev"));
+  const corsOptions = {
+     origin:'*', 
+     credentials:true,            
+     optionSuccessStatus:200,
+  } 
   
-app.use("/api", indexController);
-app.use("/api/user", userController);
-app.use("/api/hotel", hotelController);
-app.use("/api/hotel_room", hotelRoomController);
-app.use("/api/auth", authController);
-app.use("/api/register", regController);
- 
-// app.use("/api/auth", authController);
+  app.use(cors(corsOptions)) 
+  
+  app.use(bodyParser.json()); 
+  app.use(bodyParser.urlencoded({ extended: true }));
+    
+  app.use("/api", indexController);
+  app.use("/api/user", userController);
+  app.use("/api/hotel", hotelController);
+  app.use("/api/hotel_room", hotelRoomController);
+  app.use("/api/auth", authController);
+  app.use("/api/register", regController);
+   
+  // app.use("/api/auth", authController);
+  
+  app.use("/api/room_booking", roomBookingController);
+  
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    next(createError(404));
+  });
+  app.listen(port);
 
-app.use("/api/room_booking", roomBookingController);
+  loggerr.info("Express server has started on port."+port);
 
-app.use((req: Request, res: Response, next: NextFunction) => {
-  next(createError(404));
-});
-app.listen(port, () => {
-  loggerr.info("Running on port " + port);
-});
+}).catch((error: any) => console.log(error));

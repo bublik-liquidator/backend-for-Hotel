@@ -9,7 +9,7 @@ export class UserRequest {
   login!:string;
   role!:string;
 
-  manager_id!: bigint;
+
   constructor(model: UserRequest) {
     this.username = model.username
     this.password = model.password

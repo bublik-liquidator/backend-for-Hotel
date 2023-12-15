@@ -1,6 +1,6 @@
 export class HotelRoomDTO {
-    id!:bigint
-    hotel_id!:bigint;
+    id!:number
+    hotel_id!:number;
     number!:string;
     description!:string;
     price!:number;

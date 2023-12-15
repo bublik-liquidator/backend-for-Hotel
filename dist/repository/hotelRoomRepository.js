@@ -14,23 +14,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const pino_1 = __importDefault(require("pino"));
 const pino_pretty_1 = __importDefault(require("pino-pretty"));
-const loggerr = (0, pino_1.default)((0, pino_pretty_1.default)());
-const dbProvider_1 = __importDefault(require("../config/dbProvider"));
-loggerr.info(process.env.POSTGRESQL_PORT);
+const HotelRoom_1 = __importDefault(require("../models/HotelRoom"));
+const logger = (0, pino_1.default)((0, pino_pretty_1.default)());
 function getAll(page, size) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const result = yield dbProvider_1.default.pool.query("SELECT * FROM hotel_room ORDER BY id OFFSET $1 LIMIT $2", [(page - 1) * size, size]);
-            if (result.rows.length > 0) {
-                loggerr.info("hotels exist.");
-                return result.rows;
+            const result = yield HotelRoom_1.default.findAll({
+                offset: (page - 1) * size,
+                limit: size,
+                order: [['id', 'ASC']]
+            });
+            if (result.length > 0) {
+                logger.info("Hotels exist.");
+                return result;
             }
             else {
-                return 0;
+                return [];
             }
         }
         catch (err) {
-            loggerr.error(err);
+            logger.error(err);
             throw new Error("Repository getAll error");
         }
     });
@@ -38,47 +41,50 @@ function getAll(page, size) {
 function getById(id) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const result = yield dbProvider_1.default.pool.query(`SELECT * FROM hotel_room WHERE id = ${id}`);
-            if (result.rows.length > 0) {
-                return result.rows[0];
+            const result = yield HotelRoom_1.default.findByPk(id);
+            if (result) {
+                return result;
             }
             else {
-                return 0;
+                return null;
             }
         }
         catch (err) {
-            loggerr.error(err);
+            logger.error(err);
             throw new Error("Repository getById error");
         }
     });
 }
 function post(hotel) {
     return __awaiter(this, void 0, void 0, function* () {
-        const query = "INSERT INTO hotel_room(name,path_picture,hotel_id, number, description, price) VALUES($1, $2, $3, $4,$5,$6) RETURNING *";
-        const values = [hotel.name, hotel.path_picture, hotel.hotel_id, hotel.number, hotel.description, hotel.price];
         try {
-            const res = yield dbProvider_1.default.pool.query(query, values);
-            loggerr.info("Data has been saved!");
-            return res.rows[0];
+            const result = yield HotelRoom_1.default.create(hotel);
+            logger.info("Data has been saved!");
+            return result;
         }
         catch (error) {
-            loggerr.error(error);
+            logger.error(error);
             throw new Error("Repository post error");
         }
     });
 }
-;
 function put(hotel, id) {
     return __awaiter(this, void 0, void 0, function* () {
-        const query = "UPDATE hotel_room SET hotel_id = $1, number = $2, description = $3, price = $4, name = $5, path_picture=$6 WHERE id = $7 RETURNING *";
-        const values = [hotel.hotel_id, hotel.number, hotel.description, hotel.price, hotel.name, hotel.path_picture, id];
         try {
-            const res = yield dbProvider_1.default.pool.query(query, values);
-            loggerr.info("Hotel with ID:" + id + " updated successfully.");
-            return res.rows[0];
+            const updateResult = yield HotelRoom_1.default.update(hotel, {
+                where: { id: id }
+            });
+            if (updateResult[0] > 0) {
+                const updatedHotel = yield HotelRoom_1.default.findByPk(id);
+                logger.info("Hotel with ID:" + id + " updated successfully.");
+                return updatedHotel;
+            }
+            else {
+                throw new Error("No rows were updated");
+            }
         }
         catch (error) {
-            loggerr.error(error);
+            logger.error(error);
             throw new Error("Repository put error");
         }
     });
@@ -86,10 +92,12 @@ function put(hotel, id) {
 function deleteById(id) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield dbProvider_1.default.pool.query(`DELETE FROM hotel_room WHERE id = ${id}`);
+            yield HotelRoom_1.default.destroy({
+                where: { id: id }
+            });
         }
         catch (err) {
-            loggerr.error(err);
+            logger.error(err);
             throw new Error("Repository deleteById error");
         }
     });
@@ -99,5 +107,5 @@ exports.default = {
     getById,
     post,
     put,
-    deleteById,
+    deleteById
 };

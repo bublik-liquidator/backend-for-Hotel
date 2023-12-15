@@ -36,12 +36,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const userService = __importStar(require("../service/userService"));
-const user_dto_1 = require("../dto/user.dto");
-const userRequest_dto_1 = require("../dto/userRequest.dto");
 const pino_1 = __importDefault(require("pino"));
 const pino_pretty_1 = __importDefault(require("pino-pretty"));
 const loggerr = (0, pino_1.default)((0, pino_pretty_1.default)());
 const express_1 = __importDefault(require("express"));
+const middleware_1 = require("../middleware");
 const router = express_1.default.Router();
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var page = parseInt(req.query.page) || 1;
@@ -58,14 +57,14 @@ router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return res.status(500).json({ error: 'user Server Error with get all' });
     }
 }));
-router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/:id", middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = parseInt(req.params.id);
         const user = yield userService.getById(id);
         if (!user) {
             return res.status(404).json({ error: 'user not found' });
         }
-        return res.status(200).json(new user_dto_1.UserDTO(user));
+        return res.status(200).json(user);
     }
     catch (err) {
         loggerr.error(err);
@@ -76,11 +75,11 @@ router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 //   let user = await userService.getByLogin(req.body.login) 
 //   return res.json(new UserRequest(user));
 // });
-router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let user = yield userService.post(req.body);
-    return res.json(new userRequest_dto_1.UserRequest(user));
-}));
-router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// router.post("/", async (req, res) => {
+//   let user = await userService.post(req.body)
+//   return res.json(user as UserRequest);
+// });
+router.put("/:id", middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = parseInt(req.params.id);
         const user = yield userService.getById(id);
@@ -88,31 +87,38 @@ router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             return res.status(404).json({ error: 'user not found' });
         }
         const result = yield userService.put(req.body, parseInt(req.params.id));
-        return res.status(201).json(new user_dto_1.UserDTO(result));
+        return res.status(201).json(result);
     }
     catch (err) {
         loggerr.error(err);
         return res.status(500).json({ error: 'Internal Server Error with put by id' });
     }
 }));
-router.put("change_password", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.put("/change_password", middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const id = parseInt(req.params.id);
+        const id = parseInt(req.body.id);
         const user = yield userService.getById(id);
         if (!user) {
             return res.status(404).json({ error: 'user not found' });
         }
-        const result = yield userService.change_password(req.body, parseInt(req.params.id));
-        return res.status(201).json(new user_dto_1.UserDTO(result));
+        const [affectedCount] = yield userService.change_password(req.body, id);
+        if (affectedCount > 0) {
+            const updatedUser = yield userService.getById(id);
+            return res.status(201).json(updatedUser);
+        }
+        else {
+            return res.status(404).json({ error: 'No rows updated' });
+        }
     }
     catch (err) {
         loggerr.error(err);
         return res.status(500).json({ error: 'Internal Server Error with put by id' });
     }
 }));
-router.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete("/:id", middleware_1.isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = parseInt(req.params.id);
+        console.log(id);
         const user = yield userService.getById(id);
         if (!user) {
             return res.status(404).json({ error: 'user not found' });

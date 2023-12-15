@@ -13,38 +13,36 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const dbProvider_1 = __importDefault(require("../config/dbProvider"));
 const pino_1 = __importDefault(require("pino"));
 const pino_pretty_1 = __importDefault(require("pino-pretty"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const User_1 = __importDefault(require("../models/User"));
 const loggerr = (0, pino_1.default)((0, pino_pretty_1.default)());
 const SECRET_KEY = process.env.SECRET_KEY;
 function authenticateUser(user) {
     return __awaiter(this, void 0, void 0, function* () {
-        const query = "SELECT * FROM users WHERE login = $1";
-        const values = [user.login];
         try {
-            const res = yield dbProvider_1.default.pool.query(query, values);
-            if (res.rows.length > 0) {
-                const passwordMatch = yield bcrypt_1.default.compare(user.password, res.rows[0].password);
+            const foundUser = yield User_1.default.findOne({ where: { login: user.login } });
+            if (foundUser) {
+                const passwordMatch = yield bcrypt_1.default.compare(user.password, foundUser.password);
                 if (passwordMatch) {
-                    const token = jsonwebtoken_1.default.sign({ id: res.rows[0].id, role: res.rows[0].role }, process.env.SECRET_KEY);
+                    const token = jsonwebtoken_1.default.sign({ id: foundUser.id, role: foundUser.role }, SECRET_KEY);
                     loggerr.info("User authenticated!");
                     return token;
                 }
                 else {
                     loggerr.error("Invalid password!");
-                    throw new Error("Invalid password");
+                    throw new Error("Invalid credentials");
                 }
             }
             else {
                 loggerr.error("User not found!");
-                throw new Error("User not found");
+                throw new Error("Invalid credentials");
             }
         }
         catch (error) {
             loggerr.error(error);
-            throw new Error("Repository authentication error");
+            throw new Error(error + "");
         }
     });
 }

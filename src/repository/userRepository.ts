@@ -1,111 +1,91 @@
 import pino from 'pino';
 import pretty from 'pino-pretty';
-const loggerr = pino( pretty() );
-import db from "../config/dbProvider"
 import bcrypt from 'bcrypt';
 
+
+const loggerr = pino(pretty());
+
+import User from '../models/User';
 import { UserDTO } from '../dto/user.dto';
-import { UserRequest } from '../dto/userRequest.dto';
 
 
-async function getAll( page: number, size: number ): Promise<any> {
+export  async function getAll(page: number, size: number) {
   try {
-    const result = await db.pool.query( "SELECT * FROM users ORDER BY id OFFSET $1 LIMIT $2", [ ( page - 1 ) * size, size ] );
-    if ( result.rows.length > 0 ) {
-      loggerr.info( "user exist." );
-      return result.rows;
-    }
-    else {
-      loggerr.info( "I didn't find it." );
-      return 0
-    }
-  }
-  catch ( err ) {
-    loggerr.error( err );
-    throw new Error( "Repository getAll error" );
-  }
-}
-
-
-
-async function getById( id: number ) {
-  try {
-    const result = await db.pool.query( `SELECT * FROM users WHERE id = ${ id }` );
-    if ( result.rows.length > 0 ) {
-      return result.rows[ 0 ];
+    const users = await User.findAll({
+      offset: (page - 1) * size,
+      limit: size,
+      order: [['id', 'ASC']]
+    });
+    if (users.length > 0) {
+      loggerr.info("Users exists.");
+      return users;
     } else {
-      return 0
+      loggerr.info("I didn't find it.");
+      return 0;
     }
-  } catch ( err ) {
-    loggerr.error( err );
-    throw new Error( "Repository getById error" );
+  } catch (err) {
+    loggerr.error(err);
+    throw new Error("Repository getAll error");
   }
 }
 
-
-async function post( user: UserRequest ) {
-  const query = "INSERT INTO users(username, photo, phonenomber, password, many, email, birthday, login,role) VALUES($1, $2, $3, $4, $5, $6, $7, $8,$9) RETURNING *";
-  const values = [ user.username, user.photo, user.phonenomber, user.password, user.many, user.email, user.birthday, user.login, user.role ];
-  try {
-    const res = await db.pool.query( query, values );
-    loggerr.info( "Data has been saved!" );
-    return res.rows[ 0 ];
-  } catch ( error ) {
-    loggerr.error( error );
-    throw new Error( "Repository post error" );
+export async function getById(id: any): Promise<UserDTO> {
+  const user = await User.findByPk(id);
+  if (!user) {
+    throw new Error('User not found');
   }
-};
+  return new UserDTO(user);
+}
 
+export  async function post(userRequest: any) {
+  try {
+    const user = await User.create(userRequest);
+    loggerr.info("Data has been saved!");
+    return user;
+  } catch (error) {
+    loggerr.error(error);
+    throw new Error("Repository post error");
+  }
+}
 
-async function put( user: UserDTO, id: number ) {
+export  async function put(userDTO: any, id: number) {
+  try {
+    const user = await User.update(userDTO, {
+      where: { id: id }
+    });
+    loggerr.info("User with ID:" + id + " updated successfully.");
+    return user;
+  } catch (error) {
+    loggerr.error(error);
+    throw new Error("Repository put error");
+  }
+}
+
+export  async function change_password(userDTO: { password: any; username: any; login: any; }, id: number) {
   const saltRounds = 10;
-  const hashedPassword = await bcrypt.hash( user.password, saltRounds );
-
-  const query = "UPDATE users SET username = $1, photo = $2, phonenomber = $3, many = $4, email = $5, birthday = $6,role = $7 WHERE id = $8 RETURNING *";
-  const values = [ user.username, user.photo, user.phonenomber, user.many, user.email, user.birthday,user.role, id ];
+  const hashedPassword = await bcrypt.hash(userDTO.password, saltRounds);
 
   try {
-    const res = await db.pool.query( query, values );
-    loggerr.info( "user with ID:" + id + " updated successfully." );
-    return res.rows[ 0 ];
-  } catch ( error ) {
-    loggerr.error( error );
-    throw new Error( "Repository put error" );
+    const user = await User.update({ username: userDTO.username, login: userDTO.login, password: hashedPassword }, {
+      where: { id: id }
+    });
+    loggerr.info("User with ID:" + id + " updated successfully.");
+    return user;
+  } catch (error) {
+    loggerr.error(error);
+    throw new Error("Repository put error");
   }
 }
 
-async function change_password( user: UserDTO, id: number ) {
-  const saltRounds = 10;
-  const hashedPassword = await bcrypt.hash( user.password, saltRounds );
-
-  const query = "UPDATE users SET username = $1, login=$2, password = $3 WHERE id = $4 RETURNING *";
-  const values = [ user.username, user.login, hashedPassword, id ];
-
+export  async function deleteById(id: any) {
   try {
-    const res = await db.pool.query( query, values );
-    loggerr.info( "user with ID:" + id + " updated successfully." );
-    return res.rows[ 0 ];
-  } catch ( error ) {
-    loggerr.error( error );
-    throw new Error( "Repository put error" );
+    await User.destroy({
+      where: { id: id }
+    });
+  } catch (err) {
+    loggerr.error(err);
+    throw new Error("Repository deleteById error");
   }
 }
 
 
-async function deleteById( id: number ) {
-  try {
-    await db.pool.query( `DELETE FROM users WHERE id = ${ id }` );
-  } catch ( err ) {
-    loggerr.error( err );
-    throw new Error( "Repository deleteById error" );
-  }
-}
-
-export {
-  getAll,
-  getById,
-  post,
-  put,
-  deleteById,
-  change_password
-};

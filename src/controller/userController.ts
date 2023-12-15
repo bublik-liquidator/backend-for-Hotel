@@ -7,6 +7,7 @@ import pretty from 'pino-pretty';
 const loggerr = pino(pretty());
 
 import express, { Express, NextFunction, Request, Response, Router } from 'express';
+import { isAdmin } from '../middleware';
 const router: Router = express.Router();
 
 
@@ -29,32 +30,32 @@ router.get("/", async (req, res) => {
 
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", isAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const user = await userService.getById(id);
     if (!user) {
       return res.status(404).json({ error: 'user not found' });
     }
-    return res.status(200).json(new UserDTO(user));
+    return res.status(200).json(user as unknown as UserDTO);
   } catch (err) {
     loggerr.error(err);
     return res.status(500).json({ error: 'Internal Server Error with get by id' });
   }
-
 });
+
 
 // router.post("/many", async (req, res) => {
 //   let user = await userService.getByLogin(req.body.login) 
 //   return res.json(new UserRequest(user));
 // });
 
-router.post("/", async (req, res) => {
-  let user = await userService.post(req.body)
-  return res.json(new UserRequest(user));
-});
+// router.post("/", async (req, res) => {
+//   let user = await userService.post(req.body)
+//   return res.json(user as UserRequest);
+// });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id",isAdmin,  async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const user = await userService.getById(id);
@@ -62,31 +63,39 @@ router.put("/:id", async (req, res) => {
       return res.status(404).json({ error: 'user not found' });
     }
     const result = await userService.put(req.body, parseInt(req.params.id));
-    return res.status(201).json(new UserDTO(result));
+    return res.status(201).json(result as unknown as UserDTO);
   } catch (err) {
     loggerr.error(err);
     return res.status(500).json({ error: 'Internal Server Error with put by id' });
   }
 });
 
-router.put("change_password", async (req, res) => {
+router.put("/change_password",isAdmin,  async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.body.id);
     const user = await userService.getById(id);
     if (!user) {
       return res.status(404).json({ error: 'user not found' });
     }
-    const result = await userService.change_password(req.body, parseInt(req.params.id));
-    return res.status(201).json(new UserDTO(result));
+    const [affectedCount] = await userService.change_password(req.body, id);
+    if (affectedCount > 0) {
+      const updatedUser = await userService.getById(id);
+      return res.status(201).json(updatedUser);
+    } else {
+      return res.status(404).json({ error: 'No rows updated' });
+    }
   } catch (err) {
     loggerr.error(err);
     return res.status(500).json({ error: 'Internal Server Error with put by id' });
   }
 });
 
-router.delete("/:id", async (req, res) => {
+
+
+router.delete("/:id",isAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
+    console.log(id)
     const user = await userService.getById(id);
     if (!user) {
       return res.status(404).json({ error: 'user not found' });

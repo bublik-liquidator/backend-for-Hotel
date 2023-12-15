@@ -12,19 +12,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.change_password = exports.deleteById = exports.put = exports.post = exports.getById = exports.getAll = void 0;
+exports.deleteById = exports.change_password = exports.put = exports.post = exports.getById = exports.getAll = void 0;
 const pino_1 = __importDefault(require("pino"));
 const pino_pretty_1 = __importDefault(require("pino-pretty"));
-const loggerr = (0, pino_1.default)((0, pino_pretty_1.default)());
-const dbProvider_1 = __importDefault(require("../config/dbProvider"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const loggerr = (0, pino_1.default)((0, pino_pretty_1.default)());
+const User_1 = __importDefault(require("../models/User"));
+const user_dto_1 = require("../dto/user.dto");
 function getAll(page, size) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const result = yield dbProvider_1.default.pool.query("SELECT * FROM users ORDER BY id OFFSET $1 LIMIT $2", [(page - 1) * size, size]);
-            if (result.rows.length > 0) {
-                loggerr.info("user exist.");
-                return result.rows;
+            const users = yield User_1.default.findAll({
+                offset: (page - 1) * size,
+                limit: size,
+                order: [['id', 'ASC']]
+            });
+            if (users.length > 0) {
+                loggerr.info("Users exists.");
+                return users;
             }
             else {
                 loggerr.info("I didn't find it.");
@@ -40,30 +45,20 @@ function getAll(page, size) {
 exports.getAll = getAll;
 function getById(id) {
     return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const result = yield dbProvider_1.default.pool.query(`SELECT * FROM users WHERE id = ${id}`);
-            if (result.rows.length > 0) {
-                return result.rows[0];
-            }
-            else {
-                return 0;
-            }
+        const user = yield User_1.default.findByPk(id);
+        if (!user) {
+            throw new Error('User not found');
         }
-        catch (err) {
-            loggerr.error(err);
-            throw new Error("Repository getById error");
-        }
+        return new user_dto_1.UserDTO(user);
     });
 }
 exports.getById = getById;
-function post(user) {
+function post(userRequest) {
     return __awaiter(this, void 0, void 0, function* () {
-        const query = "INSERT INTO users(username, photo, phonenomber, password, many, email, birthday, login,role) VALUES($1, $2, $3, $4, $5, $6, $7, $8,$9) RETURNING *";
-        const values = [user.username, user.photo, user.phonenomber, user.password, user.many, user.email, user.birthday, user.login, user.role];
         try {
-            const res = yield dbProvider_1.default.pool.query(query, values);
+            const user = yield User_1.default.create(userRequest);
             loggerr.info("Data has been saved!");
-            return res.rows[0];
+            return user;
         }
         catch (error) {
             loggerr.error(error);
@@ -72,17 +67,14 @@ function post(user) {
     });
 }
 exports.post = post;
-;
-function put(user, id) {
+function put(userDTO, id) {
     return __awaiter(this, void 0, void 0, function* () {
-        const saltRounds = 10;
-        const hashedPassword = yield bcrypt_1.default.hash(user.password, saltRounds);
-        const query = "UPDATE users SET username = $1, photo = $2, phonenomber = $3, many = $4, email = $5, birthday = $6,role = $7 WHERE id = $8 RETURNING *";
-        const values = [user.username, user.photo, user.phonenomber, user.many, user.email, user.birthday, user.role, id];
         try {
-            const res = yield dbProvider_1.default.pool.query(query, values);
-            loggerr.info("user with ID:" + id + " updated successfully.");
-            return res.rows[0];
+            const user = yield User_1.default.update(userDTO, {
+                where: { id: id }
+            });
+            loggerr.info("User with ID:" + id + " updated successfully.");
+            return user;
         }
         catch (error) {
             loggerr.error(error);
@@ -91,16 +83,16 @@ function put(user, id) {
     });
 }
 exports.put = put;
-function change_password(user, id) {
+function change_password(userDTO, id) {
     return __awaiter(this, void 0, void 0, function* () {
         const saltRounds = 10;
-        const hashedPassword = yield bcrypt_1.default.hash(user.password, saltRounds);
-        const query = "UPDATE users SET username = $1, login=$2, password = $3 WHERE id = $4 RETURNING *";
-        const values = [user.username, user.login, hashedPassword, id];
+        const hashedPassword = yield bcrypt_1.default.hash(userDTO.password, saltRounds);
         try {
-            const res = yield dbProvider_1.default.pool.query(query, values);
-            loggerr.info("user with ID:" + id + " updated successfully.");
-            return res.rows[0];
+            const user = yield User_1.default.update({ username: userDTO.username, login: userDTO.login, password: hashedPassword }, {
+                where: { id: id }
+            });
+            loggerr.info("User with ID:" + id + " updated successfully.");
+            return user;
         }
         catch (error) {
             loggerr.error(error);
@@ -112,7 +104,9 @@ exports.change_password = change_password;
 function deleteById(id) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield dbProvider_1.default.pool.query(`DELETE FROM users WHERE id = ${id}`);
+            yield User_1.default.destroy({
+                where: { id: id }
+            });
         }
         catch (err) {
             loggerr.error(err);

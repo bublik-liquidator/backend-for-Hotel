@@ -55,12 +55,17 @@ router.put("/:id", async (req, res) => {
       return res.status(404).json({ error: 'hotelRoom not found' });
     }
     const result = await hotelRoomService.put(req.body, parseInt(req.params.id));
-    return res.status(201).json(new HotelRoomDTO(result));
+    if (result) {
+      return res.status(201).json(new HotelRoomDTO(result));
+    } else {
+      return res.status(404).json({ error: 'Update failed, hotelRoom not found' });
+    }
   } catch (err) {
     loggerr.error(err);
     return res.status(500).json({ error: 'Internal Server Error with put by id' });
   }
 });
+
 
 router.delete("/:id", async (req, res) => {
   try {

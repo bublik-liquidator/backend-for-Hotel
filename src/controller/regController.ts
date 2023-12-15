@@ -1,7 +1,8 @@
 import express from 'express';
 import regService from '../service/regService';
+import { isAdmin } from '../middleware';
 const router = express.Router();
-router.post("/", async (req, res) => {
+router.post("/",isAdmin, async (req, res) => {
     try {
       const user = await regService.register(req.body);
       if (user) {
@@ -10,6 +11,7 @@ router.post("/", async (req, res) => {
         return res.status(400).send();
       }
     } catch (error) {
+      console.log(error)
       return res.status(500).send({ error: "Ошибка регистрации" });
     }
   });

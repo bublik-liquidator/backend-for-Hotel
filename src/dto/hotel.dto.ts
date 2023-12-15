@@ -1,7 +1,7 @@
 export class HotelDTO {
-    id!:bigint
+    id!:number
     name!:string;
-    manager_id!:bigint; 
+    manager_id!:number; 
     path_picture!:string[];
     location!:string;
     services!:string[];

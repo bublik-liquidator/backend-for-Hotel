@@ -36,8 +36,8 @@ export {
   getAll,
   getById,
   post,
+  change_password,
   put,
-  deleteById,
-  change_password
+  deleteById
 };
 

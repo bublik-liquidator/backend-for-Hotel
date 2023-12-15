@@ -22,11 +22,16 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return res.json({ token });
         }
         else {
-            return res.status(401).send({ error: "Ошибка, нет токена" });
+            return res.status(401).json({ error: "Error, no token" });
         }
     }
     catch (error) {
-        return res.status(500).send({ error });
+        if (error instanceof Error) {
+            return res.status(500).json({ error: error.message });
+        }
+        else {
+            return res.status(500).json({ error: 'An unknown error occurred' });
+        }
     }
 }));
 exports.default = router;

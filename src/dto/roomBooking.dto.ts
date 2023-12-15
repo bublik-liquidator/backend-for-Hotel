@@ -1,7 +1,7 @@
 export class RoomBooking {
-  id!: bigint
-  room_id!: bigint;
-  booked_by_user_id!: bigint;
+  id!: number
+  room_id!: number;
+  booked_by_user_id!: number;
   date_from!: string;
   date_to!: string;
   payed!: boolean;

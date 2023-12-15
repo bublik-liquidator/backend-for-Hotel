@@ -1,5 +1,5 @@
 export class UserDTO {
-    id!:bigint;
+    id!:number;
     username!:string;
     password!:string;
     photo!:string;

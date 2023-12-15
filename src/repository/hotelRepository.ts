@@ -1,78 +1,82 @@
+import { Op } from 'sequelize';
 import pino from 'pino';
 import pretty from 'pino-pretty';
-const loggerr = pino(pretty());
-import db from "../config/dbProvider"
-
-import { HotelDTO } from '../dto/hotel.dto';
+import Hotel from '../models/Hotel';
 import { HotelRequest } from '../dto/hotelRequest.dto';
+import { HotelDTO } from '../dto/hotel.dto';
 
-
-loggerr.info(process.env.POSTGRESQL_PORT);
+const logger = pino(pretty());
 
 async function getAll(page: number, size: number): Promise<any> {
   try {
-    const result = await db.pool.query("SELECT * FROM hotel ORDER BY id OFFSET $1 LIMIT $2", [(page - 1) * size, size]);
-    if (result.rows.length > 0) {
-      loggerr.info("hotels exist.");
-      return result.rows;
+    const result = await Hotel.findAll({
+      offset: (page - 1) * size,
+      limit: size,
+      order: [['id', 'ASC']]
+    });
+    if (result.length > 0) {
+      logger.info("Hotels exist.");
+      return result;
+    } else {
+      return [];
     }
-    else {
-      return 0
-    }
-  }
-  catch (err) {
-    loggerr.error(err);
+  } catch (err) {
+    logger.error(err);
     throw new Error("Repository getAll error");
   }
 }
 
-
 async function getById(id: number) {
   try {
-    const result = await db.pool.query(`SELECT * FROM hotel WHERE id = ${id}`);
-    if (result.rows.length > 0) {
-      return result.rows[0];
+    const result = await Hotel.findByPk(id);
+    if (result) {
+      return result;
     } else {
-      return 0
+      return null;
     }
   } catch (err) {
-    loggerr.error(err);
+    logger.error(err);
     throw new Error("Repository getById error");
   }
 }
-async function post(hotel: HotelRequest) {
-  const query = "INSERT INTO hotel(name, manager_id,path_picture) VALUES($1, $2, $3) RETURNING *";
-  const values = [hotel.name, hotel.manager_id, hotel.path_picture];
+
+async function post(hotel: any) {
   try {
-    const res = await db.pool.query(query, values);
-    loggerr.info("Data has been saved!");
-    return res.rows[0];
+    const result = await Hotel.create(hotel);
+    logger.info("Data has been saved!");
+    return result;
   } catch (error) {
-    loggerr.error(error);
+    logger.error(error);
     throw new Error("Repository post error");
-  }
-};
-
-
-async function put(hotel: HotelDTO, id: number) {
-  const query = "UPDATE hotel SET name = $1, manager_id = $2, path_picture = $3 WHERE id = $4 RETURNING *";
-  const values = [hotel.name, hotel.manager_id, hotel.path_picture, id];
-  try {
-    const res = await db.pool.query(query, values);
-    loggerr.info("Hotel with ID:" + id + " updated successfully.");
-    return res.rows[0];
-  } catch (error) {
-    loggerr.error(error);
-    throw new Error("Repository put error");
-
   }
 }
 
+async function put(hotel: HotelDTO, id: number) {
+  try {
+    const [affectedCount, affectedRows] = await Hotel.update(hotel, {
+      where: { id: id },
+      returning: true 
+    });
+    if (affectedCount > 0) {
+      logger.info("Hotel with ID:" + id + " updated successfully.");
+      return affectedRows[0]; 
+    } else {
+      throw new Error("No rows were updated");
+    }
+  } catch (error) {
+    logger.error(error);
+    throw new Error("Repository put error");
+  }
+}
+
+
 async function deleteById(id: number) {
   try {
-    await db.pool.query(`DELETE FROM hotel WHERE id = ${id}`);
+    await Hotel.destroy({
+      where: { id: id }
+    });
   } catch (err) {
-    loggerr.error(err);
+    logger.error(err);
     throw new Error("Repository deleteById error");
   }
 }
@@ -82,5 +86,5 @@ export default {
   getById,
   post,
   put,
-  deleteById,
+  deleteById
 };

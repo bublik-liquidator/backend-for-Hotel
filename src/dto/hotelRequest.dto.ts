@@ -1,6 +1,6 @@
 export class HotelRequest {
   name!: string;
-  manager_id!: bigint;
+  manager_id!: number;
   path_picture!: string[];
 
   constructor(model: HotelRequest) {
