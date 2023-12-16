@@ -16,9 +16,12 @@ function post(hotelRoom: HotelRoomRequest) {
 async function put(hotelRoom: HotelRoomDTO, id:number) {
   return await hotelRoomRepository.put(hotelRoom, id);
 }
+
+
 function deleteById(hotelRoomlId:number) {
   return hotelRoomRepository.deleteById((hotelRoomlId));
 }
+
 
 export default {
     getAll,

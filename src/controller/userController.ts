@@ -7,7 +7,7 @@ import pretty from 'pino-pretty';
 const loggerr = pino(pretty());
 
 import express, { Express, NextFunction, Request, Response, Router } from 'express';
-import { isAdmin } from '../middleware';
+import { isAdmin } from '../middleware/middleware';
 const router: Router = express.Router();
 
 

@@ -8,6 +8,7 @@ import pretty from 'pino-pretty';
 const loggerr = pino(pretty());
 
 import express, {  Router } from 'express';
+import { isAdminOrManager, isUser, isUserOrAdminOrManager } from "../middleware/middleware";
 const router: Router = express.Router();
 
 router.get("/", async (req, res) => {
@@ -42,12 +43,12 @@ router.get("/:id", async (req, res) => {
 
 });
 
-router.post("/", async (req, res) => {
+router.post("/",isAdminOrManager, async (req, res) => {
   let hotelRoom = await hotelRoomService.post(req.body) 
   return res.json(new HotelRoomRequest(hotelRoom));
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id",isAdminOrManager, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const hotelRoom = await hotelRoomService.getById(id);
@@ -67,7 +68,7 @@ router.put("/:id", async (req, res) => {
 });
 
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id",isAdminOrManager, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const hotelRoom = await hotelRoomService.getById(id);

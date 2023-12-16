@@ -4,6 +4,8 @@ import pretty from 'pino-pretty';
 import HotelRoom from '../models/HotelRoom';
 import { HotelRoomDTO } from '../dto/hotelRoom.dto';
 import { HotelRoomRequest } from '../dto/hotelRoomRequest.dto';
+import { RoomReviewDTO } from '../dto/RoomReview.dto';
+import RoomReview from '../models/RoomReview';
 
 const logger = pino(pretty());
 

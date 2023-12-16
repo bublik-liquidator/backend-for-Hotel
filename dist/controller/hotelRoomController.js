@@ -19,6 +19,7 @@ const pino_1 = __importDefault(require("pino"));
 const pino_pretty_1 = __importDefault(require("pino-pretty"));
 const loggerr = (0, pino_1.default)((0, pino_pretty_1.default)());
 const express_1 = __importDefault(require("express"));
+const middleware_1 = require("../middleware/middleware");
 const router = express_1.default.Router();
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var page = parseInt(req.query.page) || 1;
@@ -49,11 +50,11 @@ router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         return res.status(500).json({ error: 'Internal Server Error with get by id' });
     }
 }));
-router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/", middleware_1.isAdminOrManager, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let hotelRoom = yield hotelRoomService_1.default.post(req.body);
     return res.json(new hotelRoomRequest_dto_1.HotelRoomRequest(hotelRoom));
 }));
-router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.put("/:id", middleware_1.isAdminOrManager, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = parseInt(req.params.id);
         const hotelRoom = yield hotelRoomService_1.default.getById(id);
@@ -73,7 +74,7 @@ router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         return res.status(500).json({ error: 'Internal Server Error with put by id' });
     }
 }));
-router.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete("/:id", middleware_1.isAdminOrManager, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = parseInt(req.params.id);
         const hotelRoom = yield hotelRoomService_1.default.getById(id);

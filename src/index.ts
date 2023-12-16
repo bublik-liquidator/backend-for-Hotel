@@ -25,6 +25,7 @@ const app: Express = express();
 const port = process.env.INDEX_APP_PORT || 3000;
 import cors from 'cors';
 import sequelize from './config/db';
+import roomReviewController from './controller/roomReviewController';
 
 
 sequelize.authenticate().then(async () => {
@@ -48,11 +49,9 @@ sequelize.authenticate().then(async () => {
   app.use("/api/hotel_room", hotelRoomController);
   app.use("/api/auth", authController);
   app.use("/api/register", regController);
-   
-  // app.use("/api/auth", authController);
-  
   app.use("/api/room_booking", roomBookingController);
-  
+  app.use("/api/room_review", roomReviewController);
+
   app.use((req: Request, res: Response, next: NextFunction) => {
     next(createError(404));
   });

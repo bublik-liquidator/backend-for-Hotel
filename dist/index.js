@@ -55,6 +55,7 @@ const app = (0, express_1.default)();
 const port = process.env.INDEX_APP_PORT || 3000;
 const cors_1 = __importDefault(require("cors"));
 const db_1 = __importDefault(require("./config/db"));
+const roomReviewController_1 = __importDefault(require("./controller/roomReviewController"));
 db_1.default.authenticate().then(() => __awaiter(void 0, void 0, void 0, function* () {
     app.use("/api/user", userController_1.default);
     app.use((0, morgan_1.default)("dev"));
@@ -72,8 +73,8 @@ db_1.default.authenticate().then(() => __awaiter(void 0, void 0, void 0, functio
     app.use("/api/hotel_room", hotelRoomController_1.default);
     app.use("/api/auth", authController_1.default);
     app.use("/api/register", regController_1.default);
-    // app.use("/api/auth", authController);
     app.use("/api/room_booking", roomBookingController_1.default);
+    app.use("/api/room_review", roomReviewController_1.default);
     app.use((req, res, next) => {
         next((0, http_errors_1.default)(404));
     });

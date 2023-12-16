@@ -32,7 +32,10 @@ const RoomReview = sequelize.define<RoomReviewInstance>('room_review', {
   },
   review: DataTypes.TEXT
 }, {
+  tableName: 'room_review', 
   timestamps: false
+ 
+
 });
 
 export default RoomReview;

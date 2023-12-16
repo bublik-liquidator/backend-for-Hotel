@@ -19,6 +19,7 @@ const pino_1 = __importDefault(require("pino"));
 const pino_pretty_1 = __importDefault(require("pino-pretty"));
 const loggerr = (0, pino_1.default)((0, pino_pretty_1.default)());
 const express_1 = __importDefault(require("express"));
+const middleware_1 = require("../middleware/middleware");
 const router = express_1.default.Router();
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var page = parseInt(req.query.page) || 1;
@@ -49,7 +50,7 @@ router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         return res.status(500).json({ error: 'Internal Server Error with get by id' });
     }
 }));
-router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/", middleware_1.isUserOrAdminOrManager, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let hotelRoom = yield roomBookingService_1.default.post(req.body);
     return res.json(new roomBookingRequest_dto_1.RoomBookingRequest(hotelRoom));
 }));
@@ -57,11 +58,11 @@ router.post("/check", (req, res) => __awaiter(void 0, void 0, void 0, function* 
     let hotelRoom = yield roomBookingService_1.default.postCheck(req.body);
     return res.json((hotelRoom));
 }));
-router.post("/account", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/account", middleware_1.isUserOrAdminOrManager, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let id = yield roomBookingService_1.default.postAccount(req.body.id);
     return res.json((id));
 }));
-router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.put("/:id", middleware_1.isUserOrAdminOrManager, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = parseInt(req.params.id);
         const hotelRoom = yield roomBookingService_1.default.getById(id);
@@ -76,7 +77,7 @@ router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         return res.status(500).json({ error: 'Internal Server Error with put by id' });
     }
 }));
-router.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete("/:id", middleware_1.isUserOrAdminOrManager, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = parseInt(req.params.id);
         const hotelRoom = yield roomBookingService_1.default.getById(id);

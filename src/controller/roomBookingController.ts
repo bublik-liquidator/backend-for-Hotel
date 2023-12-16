@@ -9,6 +9,7 @@ import pretty from 'pino-pretty';
 const loggerr = pino(pretty());
 
 import express, {  Router } from 'express';
+import { isUserOrAdminOrManager } from "../middleware/middleware";
 const router: Router = express.Router();
 
 router.get("/", async (req, res) => {
@@ -43,7 +44,7 @@ router.get("/:id", async (req, res) => {
 
 });
 
-router.post("/", async (req, res) => {
+router.post("/",isUserOrAdminOrManager, async (req, res) => {
   let hotelRoom = await hotelRoomService.post(req.body) 
   return res.json(new RoomBookingRequest(hotelRoom));
 });
@@ -53,12 +54,12 @@ router.post("/check", async (req, res) => {
   return res.json((hotelRoom));
 });
 
-router.post("/account", async (req, res) => {
+router.post("/account",isUserOrAdminOrManager, async (req, res) => {
   let id = await hotelRoomService.postAccount(req.body.id) 
   return res.json((id));
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id",isUserOrAdminOrManager, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const hotelRoom = await hotelRoomService.getById(id);
@@ -73,7 +74,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id",isUserOrAdminOrManager, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const hotelRoom = await hotelRoomService.getById(id);

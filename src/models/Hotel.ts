@@ -25,10 +25,11 @@ const Hotel = sequelize.define<HotelInstance>('hotel', {
       key: 'id'
     }
   },
-  path_picture: DataTypes.ARRAY(DataTypes.STRING), // Измените это на ARRAY(DataTypes.STRING)
+  path_picture: DataTypes.ARRAY(DataTypes.STRING), 
   location: DataTypes.STRING(255), 
-  services: DataTypes.ARRAY(DataTypes.STRING), // Измените это на ARRAY(DataTypes.STRING)
+  services: DataTypes.ARRAY(DataTypes.STRING), 
 }, {
+  tableName: 'hotel', 
   timestamps: false
 });
 

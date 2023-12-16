@@ -1,6 +1,6 @@
 import express from 'express';
 import regService from '../service/regService';
-import { isAdmin } from '../middleware';
+import { isAdmin } from '../middleware/middleware';
 const router = express.Router();
 router.post("/",isAdmin, async (req, res) => {
     try {
