@@ -17,8 +17,9 @@ function post(hotelRoom: RoomBookingRequest) {
 function postCheck(hotelRoom: HotelRoomDTO) {
   return hotelRoomRepository.postCheck(new HotelRoomDTO(hotelRoom));
 }
-function postAccount(id: number) {
-  return hotelRoomRepository.postAccount((id));
+
+function getAccount(id: number) {
+  return hotelRoomRepository.getAccount(id);
 }
 
 async function put(hotelRoom: RoomBooking, id:number) {
@@ -35,5 +36,5 @@ export default {
     put,
     deleteById,
     postCheck,
-    postAccount
+    getAccount
   };

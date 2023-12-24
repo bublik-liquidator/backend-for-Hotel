@@ -13,11 +13,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const authRepository_1 = __importDefault(require("../repository/authRepository"));
-function login(user) {
+function authenticateUser(user) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield authRepository_1.default.authenticateUser(user);
     });
 }
 exports.default = {
-    login
+    authenticateUser
 };

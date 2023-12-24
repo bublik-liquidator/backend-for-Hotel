@@ -1,9 +1,9 @@
 import authRepository from '../repository/authRepository';
 
-async function login(user:{ login: any; password: any; }) {
+async function authenticateUser(user:any) {
   return await authRepository.authenticateUser(user);
 }
 
 export default {
-  login
+  authenticateUser
 };

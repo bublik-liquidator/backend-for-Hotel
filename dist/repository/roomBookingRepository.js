@@ -74,7 +74,7 @@ function postCheck(room) {
         return !!result;
     });
 }
-function postAccount(id) {
+function getAccount(id) {
     return __awaiter(this, void 0, void 0, function* () {
         const result = yield RoomBooking_1.default.findAll({ where: { booked_by_user_id: id } });
         return result;
@@ -121,5 +121,5 @@ exports.default = {
     put,
     deleteById,
     postCheck,
-    postAccount
+    getAccount
 };

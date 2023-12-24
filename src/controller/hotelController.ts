@@ -44,6 +44,8 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/",isAdminOrManager, async (req, res) => {
+  console.log(isAdminOrManager)
+
   let hotel = await hotelService.post(req.body) 
   return res.json(new HotelRequest(hotel));
 });

@@ -31,6 +31,7 @@ const HotelRoom = sequelize.define<HotelRoomInstance>('hotel_room', {
   path_picture: DataTypes.STRING(255),
   name: DataTypes.STRING(255)
 }, {
+  tableName: 'hotel_room', 
   timestamps: false
 });
 

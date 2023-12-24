@@ -58,9 +58,13 @@ router.post("/check", (req, res) => __awaiter(void 0, void 0, void 0, function* 
     let hotelRoom = yield roomBookingService_1.default.postCheck(req.body);
     return res.json((hotelRoom));
 }));
-router.post("/account", middleware_1.isUserOrAdminOrManager, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let id = yield roomBookingService_1.default.postAccount(req.body.id);
-    return res.json((id));
+router.get("/account/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = Number(req.params.id);
+    if (isNaN(id)) {
+        return res.status(400).json({ error: 'Invalid id' });
+    }
+    const account = yield roomBookingService_1.default.getAccount(id);
+    return res.json(account);
 }));
 router.put("/:id", middleware_1.isUserOrAdminOrManager, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

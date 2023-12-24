@@ -53,11 +53,17 @@ router.post("/check", async (req, res) => {
   let hotelRoom = await hotelRoomService.postCheck(req.body) 
   return res.json((hotelRoom));
 });
-
-router.post("/account",isUserOrAdminOrManager, async (req, res) => {
-  let id = await hotelRoomService.postAccount(req.body.id) 
-  return res.json((id));
+ 
+router.get("/account/:id", async (req, res) => {
+  const id = Number(req.params.id);
+  if (isNaN(id)) {
+    return res.status(400).json({ error: 'Invalid id' });
+  }
+  const account = await hotelRoomService.getAccount(id);
+  return res.json(account);
 });
+
+
 
 router.put("/:id",isUserOrAdminOrManager, async (req, res) => {
   try {

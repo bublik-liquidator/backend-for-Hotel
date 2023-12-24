@@ -57,7 +57,7 @@ async function postCheck(room: HotelRoomDTO) {
   return !!result;
 }
 
-async function postAccount(id: number) {
+async function getAccount(id: number) {
   const result = await RoomBooking.findAll({ where: { booked_by_user_id: id } });
   return result;
 }
@@ -99,5 +99,5 @@ export default {
   put,
   deleteById,
   postCheck,
-  postAccount
+  getAccount
 };

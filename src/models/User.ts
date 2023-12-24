@@ -33,6 +33,7 @@ const User = sequelize.define<UserInstance>('users', {
   many: DataTypes.DECIMAL(8, 3),
   role: DataTypes.STRING(10)
 }, {
+  tableName: 'users', 
   timestamps: false
 });
 

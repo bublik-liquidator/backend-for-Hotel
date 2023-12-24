@@ -58,11 +58,13 @@ function getById(id) {
 function post(hotel) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            console.log('Received hotel:', hotel);
             const result = yield Hotel_1.default.create(hotel);
             logger.info("Data has been saved!");
             return result;
         }
         catch (error) {
+            console.error('Error details:', error);
             logger.error(error);
             throw new Error("Repository post error");
         }

@@ -40,6 +40,8 @@ const RoomBooking = sequelize.define<RoomBookingInstance>('room_booking', {
   number: DataTypes.STRING,
   name: DataTypes.STRING
 }, {
+  tableName: 'room_booking', 
+
   timestamps: false
 });
 

@@ -26,7 +26,7 @@ async function getAll(page: number, size: number): Promise<any> {
   }
 }
 
-async function getById(id: number) {
+async function getById(id: number): Promise<any> {
   try {
     const result = await Hotel.findByPk(id);
     if (result) {
@@ -40,18 +40,21 @@ async function getById(id: number) {
   }
 }
 
-async function post(hotel: any) {
+async function post(hotel: any): Promise<any> {
   try {
+    console.log('Received hotel:', hotel); 
     const result = await Hotel.create(hotel);
     logger.info("Data has been saved!");
     return result;
   } catch (error) {
+    console.error('Error details:', error); 
     logger.error(error);
     throw new Error("Repository post error");
   }
 }
 
-async function put(hotel: HotelDTO, id: number) {
+
+async function put(hotel: HotelDTO, id: number): Promise<any> {
   try {
     const [affectedCount, affectedRows] = await Hotel.update(hotel, {
       where: { id: id },

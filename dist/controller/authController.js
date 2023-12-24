@@ -17,7 +17,7 @@ const authService_1 = __importDefault(require("../service/authService"));
 const router = express_1.default.Router();
 router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const token = yield authService_1.default.login(req.body);
+        const token = yield authService_1.default.authenticateUser(req.body);
         if (token) {
             return res.json({ token });
         }

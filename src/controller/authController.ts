@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.post("/", async (req, res) => {
   try {
-    const token = await authService.login(req.body);
+    const token = await authService.authenticateUser(req.body);
     if (token) {
       return res.json({ token });
     } else {

@@ -1,8 +1,7 @@
 import { UserRequest } from "../dto/userRequest.dto";
 import { UserDTO } from "../dto/user.dto";
 
-import * as userRepository from '../repository/userRepository';
-
+import userRepository from '../repository/userRepository';
 
 async function getAll(page: number, limit: number) {
   return await userRepository.getAll(page, limit);
@@ -11,13 +10,9 @@ async function getAll(page: number, limit: number) {
 async function getById(userId: number) {
   return await userRepository.getById(userId);
 }
-// async function getByLogin(userLogin: string) {
-//   return await userRepository.getByLogin(userLogin);
-// }
-
 
 async function post(request: UserRequest) {
-  return await userRepository.post(new UserRequest(request));
+  return await userRepository.post(request);
 }
 
 async function put(newuser: UserDTO, id: number) {
@@ -25,14 +20,15 @@ async function put(newuser: UserDTO, id: number) {
 }
 
 async function change_password(newuser: UserDTO, id: number) {
-  return await userRepository.change_password(newuser, id);
+  const { password, username, login } = newuser;
+  return await userRepository.change_password({ password, username, login }, id);
 }
 
-function deleteById(userId: number) {
-  return userRepository.deleteById(userId);
+async function deleteById(userId: number) {
+  return await userRepository.deleteById(userId);
 }
 
-export {
+export default {
   getAll,
   getById,
   post,
@@ -40,4 +36,3 @@ export {
   put,
   deleteById
 };
-

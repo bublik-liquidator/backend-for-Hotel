@@ -56,15 +56,15 @@ const port = process.env.INDEX_APP_PORT || 3000;
 const cors_1 = __importDefault(require("cors"));
 const db_1 = __importDefault(require("./config/db"));
 const roomReviewController_1 = __importDefault(require("./controller/roomReviewController"));
+const corsOptions = {
+    origin: '*',
+    credentials: true,
+    optionSuccessStatus: 200,
+};
+app.use((0, cors_1.default)(corsOptions));
 db_1.default.authenticate().then(() => __awaiter(void 0, void 0, void 0, function* () {
     app.use("/api/user", userController_1.default);
     app.use((0, morgan_1.default)("dev"));
-    const corsOptions = {
-        origin: '*',
-        credentials: true,
-        optionSuccessStatus: 200,
-    };
-    app.use((0, cors_1.default)(corsOptions));
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use("/api", indexControler_1.default);

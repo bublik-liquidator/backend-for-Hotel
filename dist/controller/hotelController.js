@@ -51,6 +51,7 @@ router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 }));
 router.post("/", middleware_1.isAdminOrManager, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(middleware_1.isAdminOrManager);
     let hotel = yield hotelService_1.default.post(req.body);
     return res.json(new hotelRequest_dto_1.HotelRequest(hotel));
 }));

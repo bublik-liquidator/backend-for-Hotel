@@ -26,19 +26,19 @@ const port = process.env.INDEX_APP_PORT || 3000;
 import cors from 'cors';
 import sequelize from './config/db';
 import roomReviewController from './controller/roomReviewController';
+const corsOptions = {
+  origin:'*', 
+  credentials:true,            
+  optionSuccessStatus:200,
+} 
 
+app.use(cors(corsOptions)) 
 
 sequelize.authenticate().then(async () => {
 
   app.use("/api/user", userController);
   app.use(logger("dev"));
-  const corsOptions = {
-     origin:'*', 
-     credentials:true,            
-     optionSuccessStatus:200,
-  } 
-  
-  app.use(cors(corsOptions)) 
+
   
   app.use(bodyParser.json()); 
   app.use(bodyParser.urlencoded({ extended: true }));

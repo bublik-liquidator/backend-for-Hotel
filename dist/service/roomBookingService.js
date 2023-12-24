@@ -29,8 +29,8 @@ function post(hotelRoom) {
 function postCheck(hotelRoom) {
     return roomBookingRepository_1.default.postCheck(new hotelRoom_dto_1.HotelRoomDTO(hotelRoom));
 }
-function postAccount(id) {
-    return roomBookingRepository_1.default.postAccount((id));
+function getAccount(id) {
+    return roomBookingRepository_1.default.getAccount(id);
 }
 function put(hotelRoom, id) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -47,5 +47,5 @@ exports.default = {
     put,
     deleteById,
     postCheck,
-    postAccount
+    getAccount
 };

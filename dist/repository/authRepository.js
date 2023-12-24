@@ -17,32 +17,28 @@ const pino_1 = __importDefault(require("pino"));
 const pino_pretty_1 = __importDefault(require("pino-pretty"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const User_1 = __importDefault(require("../models/User"));
-const loggerr = (0, pino_1.default)((0, pino_pretty_1.default)());
+const logger = (0, pino_1.default)((0, pino_pretty_1.default)());
 const SECRET_KEY = process.env.SECRET_KEY;
 function authenticateUser(user) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const foundUser = yield User_1.default.findOne({ where: { login: user.login } });
-            if (foundUser) {
-                const passwordMatch = yield bcrypt_1.default.compare(user.password, foundUser.password);
-                if (passwordMatch) {
-                    const token = jsonwebtoken_1.default.sign({ id: foundUser.id, role: foundUser.role }, SECRET_KEY);
-                    loggerr.info("User authenticated!");
-                    return token;
-                }
-                else {
-                    loggerr.error("Invalid password!");
-                    throw new Error("Invalid credentials");
-                }
-            }
-            else {
-                loggerr.error("User not found!");
+            if (!foundUser) {
+                logger.error("User not found!");
                 throw new Error("Invalid credentials");
             }
+            const passwordMatch = yield bcrypt_1.default.compare(user.password, foundUser.password);
+            if (!passwordMatch) {
+                logger.error("Invalid password!");
+                throw new Error("Invalid credentials");
+            }
+            const token = jsonwebtoken_1.default.sign({ id: foundUser.id, role: foundUser.role }, SECRET_KEY);
+            logger.info("User authenticated!");
+            return token;
         }
         catch (error) {
-            loggerr.error(error);
-            throw new Error(error + "");
+            logger.error(error);
+            throw error;
         }
     });
 }

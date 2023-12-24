@@ -1,67 +1,75 @@
+import { Op } from 'sequelize';
 import pino from 'pino';
 import pretty from 'pino-pretty';
 import bcrypt from 'bcrypt';
-
-
-const loggerr = pino(pretty());
-
 import User from '../models/User';
 import { UserDTO } from '../dto/user.dto';
 
+const logger = pino(pretty());
 
-export  async function getAll(page: number, size: number) {
+async function getAll(page: number, size: number) {
   try {
-    const users = await User.findAll({
+    const result = await User.findAll({
       offset: (page - 1) * size,
       limit: size,
       order: [['id', 'ASC']]
     });
-    if (users.length > 0) {
-      loggerr.info("Users exists.");
-      return users;
+    if (result.length > 0) {
+      logger.info("Users exist.");
+      return result;
     } else {
-      loggerr.info("I didn't find it.");
-      return 0;
+      return [];
     }
   } catch (err) {
-    loggerr.error(err);
+    logger.error(err);
     throw new Error("Repository getAll error");
   }
 }
 
-export async function getById(id: any): Promise<UserDTO> {
-  const user = await User.findByPk(id);
-  if (!user) {
-    throw new Error('User not found');
+async function getById(id: number) {
+  try {
+    const result = await User.findByPk(id);
+    if (result) {
+      return result;
+    } else {
+      return null;
+    }
+  } catch (err) {
+    logger.error(err);
+    throw new Error("Repository getById error");
   }
-  return new UserDTO(user);
 }
 
-export  async function post(userRequest: any) {
+async function post(user: any) {
   try {
-    const user = await User.create(userRequest);
-    loggerr.info("Data has been saved!");
-    return user;
+    const result = await User.create(user);
+    logger.info("Data has been saved!");
+    return result;
   } catch (error) {
-    loggerr.error(error);
+    logger.error(error);
     throw new Error("Repository post error");
   }
 }
 
-export  async function put(userDTO: any, id: number) {
+async function put(user: UserDTO, id: number) {
   try {
-    const user = await User.update(userDTO, {
+    const updateResult = await User.update(user, {
       where: { id: id }
     });
-    loggerr.info("User with ID:" + id + " updated successfully.");
-    return user;
+    if (updateResult[0] > 0) { 
+      const updatedUser = await User.findByPk(id); 
+      logger.info("User with ID:" + id + " updated successfully.");
+      return updatedUser; 
+    } else {
+      throw new Error("No rows were updated");
+    }
   } catch (error) {
-    loggerr.error(error);
+    logger.error(error);
     throw new Error("Repository put error");
   }
 }
 
-export  async function change_password(userDTO: { password: any; username: any; login: any; }, id: number) {
+async function change_password(userDTO: { password: any; username: any; login: any; }, id: number) {
   const saltRounds = 10;
   const hashedPassword = await bcrypt.hash(userDTO.password, saltRounds);
 
@@ -69,23 +77,30 @@ export  async function change_password(userDTO: { password: any; username: any; 
     const user = await User.update({ username: userDTO.username, login: userDTO.login, password: hashedPassword }, {
       where: { id: id }
     });
-    loggerr.info("User with ID:" + id + " updated successfully.");
+    logger.info("User with ID:" + id + " updated successfully.");
     return user;
   } catch (error) {
-    loggerr.error(error);
+    logger.error(error);
     throw new Error("Repository put error");
   }
 }
 
-export  async function deleteById(id: any) {
+async function deleteById(id: number) {
   try {
     await User.destroy({
       where: { id: id }
     });
   } catch (err) {
-    loggerr.error(err);
+    logger.error(err);
     throw new Error("Repository deleteById error");
   }
 }
 
-
+export default {
+  getAll,
+  getById,
+  post,
+  put,
+  change_password,
+  deleteById
+};
