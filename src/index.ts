@@ -2,7 +2,7 @@ import createError from 'http-errors';
 import logger from 'morgan';
 import express, { Express, NextFunction, Request, Response } from 'express';
 import * as bodyParser from 'body-parser';
-
+import swagger from './config/swager';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -18,24 +18,23 @@ import regController from "./controller/regController";
 
 import roomBookingController from "./controller/roomBookingController";
 import userController from "./controller/userController";
-
-
-
-const app: Express = express();
-const port = process.env.INDEX_APP_PORT || 3000;
 import cors from 'cors';
 import sequelize from './config/db';
 import roomReviewController from './controller/roomReviewController';
-const corsOptions = {
-  origin:'*', 
-  credentials:true,            
-  optionSuccessStatus:200,
-} 
 
+
+const app: Express = express();
+const corsOptions = {
+  origin: '*',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
 app.use(cors(corsOptions)) 
 
-sequelize.authenticate().then(async () => {
+const port = process.env.INDEX_APP_PORT || 3000;
 
+sequelize.authenticate().then(async () => {
   app.use("/api/user", userController);
   app.use(logger("dev"));
 
@@ -51,6 +50,7 @@ sequelize.authenticate().then(async () => {
   app.use("/api/register", regController);
   app.use("/api/room_booking", roomBookingController);
   app.use("/api/room_review", roomReviewController);
+  swagger(app);
 
   app.use((req: Request, res: Response, next: NextFunction) => {
     next(createError(404));

@@ -39,6 +39,7 @@ const http_errors_1 = __importDefault(require("http-errors"));
 const morgan_1 = __importDefault(require("morgan"));
 const express_1 = __importDefault(require("express"));
 const bodyParser = __importStar(require("body-parser"));
+const swager_1 = __importDefault(require("./config/swager"));
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 const pino_1 = __importDefault(require("pino"));
@@ -51,17 +52,18 @@ const authController_1 = __importDefault(require("./controller/authController"))
 const regController_1 = __importDefault(require("./controller/regController"));
 const roomBookingController_1 = __importDefault(require("./controller/roomBookingController"));
 const userController_1 = __importDefault(require("./controller/userController"));
-const app = (0, express_1.default)();
-const port = process.env.INDEX_APP_PORT || 3000;
 const cors_1 = __importDefault(require("cors"));
 const db_1 = __importDefault(require("./config/db"));
 const roomReviewController_1 = __importDefault(require("./controller/roomReviewController"));
+const app = (0, express_1.default)();
 const corsOptions = {
     origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
-    optionSuccessStatus: 200,
+    optionsSuccessStatus: 200,
 };
 app.use((0, cors_1.default)(corsOptions));
+const port = process.env.INDEX_APP_PORT || 3000;
 db_1.default.authenticate().then(() => __awaiter(void 0, void 0, void 0, function* () {
     app.use("/api/user", userController_1.default);
     app.use((0, morgan_1.default)("dev"));
@@ -75,6 +77,7 @@ db_1.default.authenticate().then(() => __awaiter(void 0, void 0, void 0, functio
     app.use("/api/register", regController_1.default);
     app.use("/api/room_booking", roomBookingController_1.default);
     app.use("/api/room_review", roomReviewController_1.default);
+    (0, swager_1.default)(app);
     app.use((req, res, next) => {
         next((0, http_errors_1.default)(404));
     });
