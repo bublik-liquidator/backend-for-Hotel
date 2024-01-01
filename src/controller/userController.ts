@@ -8,7 +8,8 @@ const loggerr = pino( pretty() );
 import express, { Express, NextFunction, Request, Response, Router } from 'express';
 import { isAdmin, isUserOrAdminOrManager } from '../middleware/middleware';
 const router: Router = express.Router();
-
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 /**
  * @swagger
  * /user/:
@@ -151,19 +152,25 @@ router.get( "/:id", async ( req, res ) => {
   *       '500':
   *         description: Internal Server Error with put by id
   */
-router.put( "/:id", isUserOrAdminOrManager, async ( req, res ) => {
+
+
+router.put("/:id", isUserOrAdminOrManager, async (req, res) => {
   try {
-    const id = parseInt( req.params.id );
-    const result = await userService.put( req.body, id );
-    if ( !result ) {
-      return res.status( 404 ).json( { error: 'user not found' } );
+    const id = parseInt(req.params.id);
+    console.log(req.body)
+    if (req.body.password) {
+      req.body.password = await bcrypt.hash(req.body.password, saltRounds);
     }
-    return res.status( 201 ).json( result as unknown as UserDTO );
-  } catch ( err ) {
-    loggerr.error( err );
-    return res.status( 500 ).json( { error: 'Internal Server Error with put by id' } );
+    const result = await userService.put(req.body, id);
+    if (!result) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    return res.status(201).json(result);
+  } catch (err) {
+    loggerr.error(err);
+    return res.status(500).json({ error: 'Internal Server Error with put by id' });
   }
-} );
+});
 
 /**
  * @swagger

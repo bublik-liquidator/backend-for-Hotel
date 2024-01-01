@@ -13,7 +13,7 @@ const router: Router = express.Router();
 
 router.get("/", async (req, res) => {
    var page: number = parseInt(req.query.page as string)|| 1;
-  var limit: number = parseInt(req.query.limit as string)|| 10;  
+  var limit: number = parseInt(req.query.limit as string)|| 100;  
   try {    
     const result = await hotelService.getAll(page, limit);
     if (!result) {
@@ -62,6 +62,18 @@ router.put("/:id",isAdminOrManager, async (req, res) => {
   } catch (err) {
     loggerr.error(err);
     return res.status(500).json({ error: 'Internal Server Error with put by id' });
+  }
+});
+
+router.put("/:id/assign_manager", isAdminOrManager, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const managerId = parseInt(req.body.manager_id);
+    const result = await hotelService.assignManager(id, managerId);
+    return res.status(201).json(new HotelDTO(result));
+  } catch (err) {
+    loggerr.error(err);
+    return res.status(500).json({ error: 'Internal Server Error with assign manager' });
   }
 });
 

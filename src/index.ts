@@ -8,7 +8,7 @@ dotenv.config();
 
 import pino from 'pino';
 import pretty from 'pino-pretty';
-const loggerr = pino(pretty());
+const loggerr = pino( pretty() );
 
 import indexController from "./controller/indexControler";
 import hotelController from "./controller/hotelController";
@@ -22,7 +22,6 @@ import cors from 'cors';
 import sequelize from './config/db';
 import roomReviewController from './controller/roomReviewController';
 
-
 const app: Express = express();
 const corsOptions = {
   origin: '*',
@@ -30,33 +29,31 @@ const corsOptions = {
   credentials: true,
   optionsSuccessStatus: 200,
 };
-app.use(cors(corsOptions)) 
+app.use( cors( corsOptions ) )
 
 const port = process.env.INDEX_APP_PORT || 3000;
 
-sequelize.authenticate().then(async () => {
-  app.use("/api/user", userController);
-  app.use(logger("dev"));
+app.use( bodyParser.json() );
+app.use( bodyParser.urlencoded( { extended: true } ) );
 
-  
-  app.use(bodyParser.json()); 
-  app.use(bodyParser.urlencoded({ extended: true }));
-    
-  app.use("/api", indexController);
-  app.use("/api/user", userController);
-  app.use("/api/hotel", hotelController);
-  app.use("/api/hotel_room", hotelRoomController);
-  app.use("/api/auth", authController);
-  app.use("/api/register", regController);
-  app.use("/api/room_booking", roomBookingController);
-  app.use("/api/room_review", roomReviewController);
-  swagger(app);
+sequelize.authenticate().then( async () => {
+  app.use( logger( "dev" ) );
 
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    next(createError(404));
-  });
-  app.listen(port);
+  app.use( "/api", indexController );
+  app.use( "/api/user", userController );
+  app.use( "/api/hotel", hotelController );
+  app.use( "/api/hotel_room", hotelRoomController );
+  app.use( "/api/auth", authController );
+  app.use( "/api/register", regController );
+  app.use( "/api/room_booking", roomBookingController );
+  app.use( "/api/room_review", roomReviewController );
+  swagger( app );
 
-  loggerr.info("Express server has started on port."+port);
+  app.use( ( req: Request, res: Response, next: NextFunction ) => {
+    next( createError( 404 ) );
+  } );
+  app.listen( port );
 
-}).catch((error: any) => console.log(error));
+  loggerr.info( "Express server has started on port." + port );
+
+} ).catch( ( error: any ) => console.log( error ) );

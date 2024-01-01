@@ -64,11 +64,10 @@ const corsOptions = {
 };
 app.use((0, cors_1.default)(corsOptions));
 const port = process.env.INDEX_APP_PORT || 3000;
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 db_1.default.authenticate().then(() => __awaiter(void 0, void 0, void 0, function* () {
-    app.use("/api/user", userController_1.default);
     app.use((0, morgan_1.default)("dev"));
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({ extended: true }));
     app.use("/api", indexControler_1.default);
     app.use("/api/user", userController_1.default);
     app.use("/api/hotel", hotelController_1.default);

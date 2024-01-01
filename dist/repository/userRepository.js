@@ -51,7 +51,7 @@ function getById(id) {
             }
         }
         catch (err) {
-            logger.error(err);
+            logger.error(`Repository getById error for user with id: ${id}`, err);
             throw new Error("Repository getById error");
         }
     });
@@ -75,6 +75,7 @@ function put(user, id) {
             const updateResult = yield User_1.default.update(user, {
                 where: { id: id }
             });
+            console.log(updateResult);
             if (updateResult[0] > 0) {
                 const updatedUser = yield User_1.default.findByPk(id);
                 logger.info("User with ID:" + id + " updated successfully.");
@@ -120,11 +121,25 @@ function deleteById(id) {
         }
     });
 }
+function findUserByLogin(login) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const user = yield User_1.default.findOne({ where: { login: login } });
+            return user;
+        }
+        catch (error) {
+            logger.error(error);
+            throw new Error("Repository find user by login error");
+        }
+    });
+}
+;
 exports.default = {
     getAll,
     getById,
     post,
     put,
     change_password,
-    deleteById
+    deleteById,
+    findUserByLogin
 };

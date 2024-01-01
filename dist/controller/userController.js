@@ -19,6 +19,8 @@ const loggerr = (0, pino_1.default)((0, pino_pretty_1.default)());
 const express_1 = __importDefault(require("express"));
 const middleware_1 = require("../middleware/middleware");
 const router = express_1.default.Router();
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 /**
  * @swagger
  * /user/:
@@ -162,9 +164,13 @@ router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 router.put("/:id", middleware_1.isUserOrAdminOrManager, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = parseInt(req.params.id);
+        console.log(req.body);
+        if (req.body.password) {
+            req.body.password = yield bcrypt.hash(req.body.password, saltRounds);
+        }
         const result = yield userService_1.default.put(req.body, id);
         if (!result) {
-            return res.status(404).json({ error: 'user not found' });
+            return res.status(404).json({ error: 'User not found' });
         }
         return res.status(201).json(result);
     }

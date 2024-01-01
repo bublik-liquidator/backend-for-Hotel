@@ -14,9 +14,13 @@ async function post(request: HotelRequest) {
   return await hotelRepository.post(new HotelRequest(request));
 }
 
-async function put(newmeetup: HotelDTO, id: number) {
-  return await hotelRepository.put(newmeetup, id);
+async function put(newHotl: HotelDTO, id: number) {
+  return await hotelRepository.put(newHotl, id);
 }
+async function assignManager(newHotel: any, id: number) {
+  return await hotelRepository.assignManager(newHotel, id);
+}
+
 
 function deleteById(meetupId: number) {
   return hotelRepository.deleteById(meetupId);
@@ -27,5 +31,6 @@ export default {
   getById,
   post,
   put,
-  deleteById,
+  assignManager,
+  deleteById  
 };

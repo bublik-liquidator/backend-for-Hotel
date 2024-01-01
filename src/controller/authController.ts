@@ -35,7 +35,6 @@ const router = express.Router();
  *       '500':
  *         description: An internal server error occurred during the authentication process.
  */
-
 router.post("/", async (req, res) => {
   console.log("Received a request to authenticate a user.");
   try {
@@ -45,17 +44,19 @@ router.post("/", async (req, res) => {
       console.log("Authentication successful, returning token.");
       return res.json({ token });
     } else {
-      console.log("Error, no token returned.");
-      return res.status(401).json({ error: "Error, no token"});
+      console.log("Authentication failed, no token returned.");
+      return res.status(401).json({ error: "Invalid username or password" });
     }
   } catch (error) {
     console.log("An error occurred while authenticating user:", error);
     if (error instanceof Error) {
-      return res.status(500).json({ error: error.message });
+      return res.json({ error: error.message });
     } else {
-      return res.status(500).json({ error: 'An unknown error occurred' });
+      return res.json({ error: (error as Error).message });
     }
   }
 });
+
+
 
 export default router;

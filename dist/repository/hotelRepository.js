@@ -91,6 +91,27 @@ function put(hotel, id) {
         }
     });
 }
+function assignManager(hotelId, managerId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const [affectedCount, affectedRows] = yield Hotel_1.default.update({ manager_id: managerId }, {
+                where: { id: hotelId },
+                returning: true
+            });
+            if (affectedCount > 0) {
+                logger.info("Manager with ID:" + managerId + " assigned to hotel with ID:" + hotelId + " successfully.");
+                return affectedRows[0];
+            }
+            else {
+                throw new Error("No rows were updated");
+            }
+        }
+        catch (error) {
+            logger.error(error);
+            throw new Error("Repository assignManager error");
+        }
+    });
+}
 function deleteById(id) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -109,5 +130,6 @@ exports.default = {
     getById,
     post,
     put,
+    assignManager,
     deleteById
 };

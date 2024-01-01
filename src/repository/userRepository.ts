@@ -35,7 +35,7 @@ async function getById(id: number) {
       return null;
     }
   } catch (err) {
-    logger.error(err);
+    logger.error(`Repository getById error for user with id: ${id}`, err);
     throw new Error("Repository getById error");
   }
 }
@@ -56,6 +56,7 @@ async function put(user: UserDTO, id: number) {
     const updateResult = await User.update(user, {
       where: { id: id }
     });
+    console.log(updateResult)
     if (updateResult[0] > 0) { 
       const updatedUser = await User.findByPk(id); 
       logger.info("User with ID:" + id + " updated successfully.");
@@ -95,12 +96,21 @@ async function deleteById(id: number) {
     throw new Error("Repository deleteById error");
   }
 }
-
+async function findUserByLogin(login: any) {
+  try {
+    const user = await User.findOne({ where: { login: login } });
+    return user;
+  } catch (error) {
+    logger.error(error);
+    throw new Error("Repository find user by login error");
+  }
+};
 export default {
   getAll,
   getById,
   post,
   put,
   change_password,
-  deleteById
+  deleteById,
+  findUserByLogin
 };

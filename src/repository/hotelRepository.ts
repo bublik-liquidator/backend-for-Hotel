@@ -72,6 +72,23 @@ async function put(hotel: HotelDTO, id: number): Promise<any> {
   }
 }
 
+async function assignManager(hotelId: number, managerId: number): Promise<any> {
+  try {
+    const [affectedCount, affectedRows] = await Hotel.update({ manager_id: managerId }, {
+      where: { id: hotelId },
+      returning: true 
+    });
+    if (affectedCount > 0) {
+      logger.info("Manager with ID:" + managerId + " assigned to hotel with ID:" + hotelId + " successfully.");
+      return affectedRows[0]; 
+    } else {
+      throw new Error("No rows were updated");
+    }
+  } catch (error) {
+    logger.error(error);
+    throw new Error("Repository assignManager error");
+  }
+}
 
 async function deleteById(id: number) {
   try {
@@ -89,5 +106,6 @@ export default {
   getById,
   post,
   put,
+  assignManager,
   deleteById
 };

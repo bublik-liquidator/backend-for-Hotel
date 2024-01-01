@@ -29,9 +29,14 @@ function post(request) {
         return yield hotelRepository_1.default.post(new hotelRequest_dto_1.HotelRequest(request));
     });
 }
-function put(newmeetup, id) {
+function put(newHotl, id) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield hotelRepository_1.default.put(newmeetup, id);
+        return yield hotelRepository_1.default.put(newHotl, id);
+    });
+}
+function assignManager(newHotel, id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield hotelRepository_1.default.assignManager(newHotel, id);
     });
 }
 function deleteById(meetupId) {
@@ -42,5 +47,6 @@ exports.default = {
     getById,
     post,
     put,
-    deleteById,
+    assignManager,
+    deleteById
 };
