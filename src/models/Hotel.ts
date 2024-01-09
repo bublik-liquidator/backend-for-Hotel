@@ -23,7 +23,8 @@ const Hotel = sequelize.define<HotelInstance>('hotel', {
     references: {
       model: User,
       key: 'id'
-    }
+    },
+    onDelete: 'CASCADE' 
   },
   path_picture: DataTypes.ARRAY(DataTypes.STRING), 
   location: DataTypes.STRING(255), 
